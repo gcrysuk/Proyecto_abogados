@@ -49,15 +49,24 @@ include_once '../database/conexion.php';
         </select>
 
         <label for="perito_id">Perito:</label>
-        <select id="perito_id" name="perito_id">
+        <select id="perito_id" name="perito_id" required>
             <option value="">Ninguno</option>
             <?php
             $peritos = $conn->query("SELECT ID, Nombre FROM Peritos");
             while ($perito = $peritos->fetch_assoc()) {
-                echo "<option value='{$perito['ID']}'>{$perito['Nombre']}</option>";
+                echo "<option value='{$perito['ID']}'>" . htmlspecialchars($perito['Nombre']) . "</option>";
             }
             ?>
+            <option value="add">Agregar uno nuevo</option>
         </select>
+
+        <script>
+            document.getElementById('perito_id').addEventListener('change', function () {
+                if (this.value === 'add') {
+                    window.location.href = 'peritos.php?return=causas.php';
+                }
+            });
+        </script>
 
         <label for="descripcion">Descripción:</label>
         <textarea id="descripcion" name="descripcion"></textarea>
@@ -106,7 +115,7 @@ include_once '../database/conexion.php';
                     echo "<td>{$row['ClienteDNI']} - {$row['ClienteNombre']}</td>";
                     echo "<td>{$row['Juzgado']}</td>";
                     echo "<td>{$row['Objeto']}</td>";
-                    echo "<td>{$row['Perito']}</td>";
+                    echo "<td>" . htmlspecialchars($row['Perito']) . "</td>";
                     echo "<td>{$row['Descripcion']}</td>";
                     echo "<td>{$row['Fecha_Alta']}</td>";
                     echo "<td>
@@ -129,7 +138,7 @@ include_once '../database/conexion.php';
         $cliente_dni = $_POST['cliente_dni'];
         $juzgado_id = $_POST['juzgado_id'];
         $objeto_id = $_POST['objeto_id'];
-        $perito_id = $_POST['perito_id'] ?: 'NULL';
+        $perito_id = $_POST['perito_id'] === 'add' ? 'NULL' : $_POST['perito_id'];
         $descripcion = $_POST['descripcion'];
         $fecha_alta = $_POST['fecha_alta'];
 
