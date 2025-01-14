@@ -58,7 +58,7 @@ include_once '../database/conexion.php';
         </select>
 
         <label for="perito_id">Perito:</label>
-        <select id="perito_id" name="perito_id">
+        <select id="perito_id" name="perito_id" required>
             <option value="">Ninguno</option>
             <?php
             $peritos = $conn->query("SELECT ID, Nombre FROM Peritos");
@@ -159,6 +159,7 @@ include_once '../database/conexion.php';
             header("Refresh:0"); // Recargar la página
         } else {
             echo "<p>Error al agregar causa: " . $conn->error . "</p>";
+            echo "<p>Consulta ejecutada: $sql</p>";
         }
     }
     ?>
