@@ -1,0 +1,7 @@
+{
+    "php.suggest.basic": false,
+    "php.validate.enable": false,
+    "php.validate.executablePath": "D:\\php-8.4.2",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true
+}

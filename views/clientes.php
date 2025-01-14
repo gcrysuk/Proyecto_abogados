@@ -13,8 +13,13 @@ include_once '../database/conexion.php';
 <body>
     <h1>Gestión de Clientes</h1>
 
+    <?php
+    // Obtener la página de regreso
+    $return_page = isset($_GET['return']) ? $_GET['return'] : 'clientes.php';
+    ?>
+
     <!-- Formulario para agregar un cliente -->
-    <form action="clientes.php" method="POST">
+    <form action="clientes.php?return=<?php echo htmlspecialchars($return_page); ?>" method="POST">
         <label for="dni">DNI:</label>
         <input type="text" id="dni" name="dni" required>
 
@@ -82,11 +87,14 @@ include_once '../database/conexion.php';
 
         if ($conn->query($sql) === TRUE) {
             echo "<p>Cliente agregado con éxito.</p>";
-            header("Refresh:0"); // Recargar la página
+            header("Location: " . htmlspecialchars($return_page));
+            exit;
         } else {
             echo "<p>Error al agregar cliente: " . $conn->error . "</p>";
         }
     }
     ?>
+
+    <a href="<?php echo htmlspecialchars($return_page); ?>">Volver</a>
 </body>
 </html>

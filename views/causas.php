@@ -26,7 +26,16 @@ include_once '../database/conexion.php';
                 echo "<option value='{$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
             }
             ?>
+            <option value="add">Agregar un nuevo cliente</option>
         </select>
+
+        <script>
+            document.getElementById('cliente_dni').addEventListener('change', function () {
+                if (this.value === 'add') {
+                    window.location.href = 'clientes.php?return=causas.php';
+                }
+            });
+        </script>
 
         <label for="juzgado_id">Juzgado:</label>
         <select id="juzgado_id" name="juzgado_id" required>
