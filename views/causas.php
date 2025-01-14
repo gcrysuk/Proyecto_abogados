@@ -58,7 +58,7 @@ include_once '../database/conexion.php';
         </select>
 
         <label for="perito_id">Perito:</label>
-        <select id="perito_id" name="perito_id" required>
+        <select id="perito_id" name="perito_id">
             <option value="">Ninguno</option>
             <?php
             $peritos = $conn->query("SELECT ID, Nombre FROM Peritos");
