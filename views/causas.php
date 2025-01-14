@@ -58,7 +58,7 @@ include_once '../database/conexion.php';
         </select>
 
         <label for="perito_id">Perito:</label>
-        <select id="perito_id" name="perito_id">
+        <select id="perito_id" name="perito_id" required>
             <option value="">Ninguno</option>
             <?php
             $peritos = $conn->query("SELECT ID, Nombre FROM Peritos");
@@ -147,9 +147,9 @@ include_once '../database/conexion.php';
         $cliente_dni = $_POST['cliente_dni'];
         $juzgado_id = $_POST['juzgado_id'];
         $objeto_id = $_POST['objeto_id'];
-        $perito_id = $_POST['perito_id'] === 'add' ? 'NULL' : $_POST['perito_id'];
-        $descripcion = $_POST['descripcion'];
-        $fecha_alta = $_POST['fecha_alta'];
+        $perito_id = empty($_POST['perito_id']) ? 'NULL' : "'" . $conn->real_escape_string($_POST['perito_id']) . "'";
+        $descripcion = $conn->real_escape_string($_POST['descripcion']);
+        $fecha_alta = $conn->real_escape_string($_POST['fecha_alta']);
 
         $sql = "INSERT INTO Causas (Numero_Expediente, Cliente_DNI, Juzgado_ID, Objeto_ID, Perito_ID, Descripcion, Fecha_Alta) 
                 VALUES ('$numero_expediente', '$cliente_dni', '$juzgado_id', '$objeto_id', $perito_id, '$descripcion', '$fecha_alta')";
