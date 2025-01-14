@@ -5,12 +5,14 @@ include_once '../database/conexion.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seguimiento de Causas</title>
     <link rel="stylesheet" href="../css/estilos.css">
 </head>
+
 <body>
     <h1>Seguimiento de Causas</h1>
 
@@ -41,7 +43,7 @@ include_once '../database/conexion.php';
         </select>
 
         <script>
-            document.getElementById('estado_id').addEventListener('change', function () {
+            document.getElementById('estado_id').addEventListener('change', function() {
                 if (this.value === 'add') {
                     window.location.href = 'estados.php?return=seguimientos.php';
                 }
@@ -89,7 +91,7 @@ include_once '../database/conexion.php';
                     echo "<td>{$row['Fecha_Movimiento']}</td>";
                     echo "<td>{$row['Timestamp']}</td>";
                     echo "<td>
-                            <a href='editar_seguimientos.php?id={$row['ID']}'>Editar</a>
+                            <a href='editar_seguimiento.php?id={$row['ID']}'>Editar</a>
                             <a href='eliminar_seguimientos.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar este registro?\");'>Eliminar</a>
                           </td>";
                     echo "</tr>";
@@ -128,4 +130,5 @@ include_once '../database/conexion.php';
     }
     ?>
 </body>
+
 </html>

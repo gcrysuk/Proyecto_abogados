@@ -1,5 +1,5 @@
 <?php
-// views/editar_seguimientos.php
+// views/editar_seguimiento.php
 include_once '../database/conexion.php';
 
 // Obtener el ID del seguimiento
@@ -40,12 +40,14 @@ if (isset($_POST['actualizar'])) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Seguimiento</title>
     <link rel="stylesheet" href="../css/estilos.css">
 </head>
+
 <body>
     <h1>Editar Seguimiento</h1>
 
@@ -83,4 +85,5 @@ if (isset($_POST['actualizar'])) {
 
     <a href="seguimientos.php">Volver a la lista de seguimientos</a>
 </body>
+
 </html>
