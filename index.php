@@ -13,7 +13,7 @@
         <ul>
             <li><a href="views/clientes.php">Gestión de Clientes</a></li>
             <li><a href="views/causas.php">Gestión de Causas</a></li>
-            <li><a href="views/seguimiento.php">Seguimiento de Causas</a></li>
+            <li><a href="views/seguimientos.php">Seguimiento de Causas</a></li>
         </ul>
     </nav>
 

@@ -1,5 +1,5 @@
 <?php
-// views/eliminar_seguimiento.php
+// views/eliminar_seguimientos.php
 include_once '../database/conexion.php';
 
 // Obtener el ID del seguimiento
@@ -12,7 +12,7 @@ if (!$id) {
 $sql = "DELETE FROM Seguimiento WHERE ID = $id";
 if ($conn->query($sql) === TRUE) {
     echo "<p>Registro de seguimiento eliminado con éxito.</p>";
-    header("Location: seguimiento.php"); // Redirigir a la lista de seguimientos
+    header("Location: seguimientos.php"); // Redirigir a la lista de seguimientos
     exit;
 } else {
     echo "<p>Error al eliminar el registro: " . $conn->error . "</p>";

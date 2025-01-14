@@ -89,8 +89,8 @@ include_once '../database/conexion.php';
                     echo "<td>{$row['Fecha_Movimiento']}</td>";
                     echo "<td>{$row['Timestamp']}</td>";
                     echo "<td>
-                            <a href='editar_seguimiento.php?id={$row['ID']}'>Editar</a>
-                            <a href='eliminar_seguimiento.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar este registro?\");'>Eliminar</a>
+                            <a href='editar_seguimientos.php?id={$row['ID']}'>Editar</a>
+                            <a href='eliminar_seguimientos.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar este registro?\");'>Eliminar</a>
                           </td>";
                     echo "</tr>";
                 }

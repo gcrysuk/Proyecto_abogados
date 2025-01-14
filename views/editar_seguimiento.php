@@ -1,5 +1,5 @@
 <?php
-// views/editar_seguimiento.php
+// views/editar_seguimientos.php
 include_once '../database/conexion.php';
 
 // Obtener el ID del seguimiento
@@ -30,7 +30,7 @@ if (isset($_POST['actualizar'])) {
 
     if ($conn->query($sql) === TRUE) {
         echo "<p>Registro actualizado con éxito.</p>";
-        header("Location: seguimiento.php"); // Redirigir a la lista de seguimientos
+        header("Location: seguimientos.php"); // Redirigir a la lista de seguimientos
         exit;
     } else {
         echo "<p>Error al actualizar el registro: " . $conn->error . "</p>";
@@ -81,6 +81,6 @@ if (isset($_POST['actualizar'])) {
         <button type="submit" name="actualizar">Actualizar Seguimiento</button>
     </form>
 
-    <a href="seguimiento.php">Volver a la lista de seguimientos</a>
+    <a href="seguimientos.php">Volver a la lista de seguimientos</a>
 </body>
 </html>
