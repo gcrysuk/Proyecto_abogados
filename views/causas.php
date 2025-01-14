@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // views/causas.php
 include_once '../database/conexion.php';
 ?>
@@ -156,7 +157,8 @@ include_once '../database/conexion.php';
 
         if ($conn->query($sql) === TRUE) {
             echo "<p>Causa agregada con éxito.</p>";
-            header("Refresh:0"); // Recargar la página
+            header("Refresh:0");
+ob_end_flush(); // Recargar la página
         } else {
             echo "<p>Error al agregar causa: " . $conn->error . "</p>";
             echo "<p>Consulta ejecutada: $sql</p>";
