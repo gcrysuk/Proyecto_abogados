@@ -1,5 +1,4 @@
 <?php
-ob_start();
 // views/causas.php
 include_once '../database/conexion.php';
 ?>
@@ -10,9 +9,10 @@ include_once '../database/conexion.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Causas</title>
     <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <h1>Gestión de Causas</h1>
+    <header>Gestión de Causas</header>
 
     <!-- Formulario para agregar una causa -->
     <form action="causas.php" method="POST">
@@ -91,7 +91,7 @@ include_once '../database/conexion.php';
 
     <!-- Lista de causas -->
     <h2>Lista de Causas</h2>
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>ID</th>
@@ -128,9 +128,9 @@ include_once '../database/conexion.php';
                     echo "<td>" . htmlspecialchars($row['Perito']) . "</td>";
                     echo "<td>{$row['Descripcion']}</td>";
                     echo "<td>{$row['Fecha_Alta']}</td>";
-                    echo "<td>
-                            <a href='editar_causa.php?id={$row['ID']}'>Editar</a>
-                            <a href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'>Eliminar</a>
+                    echo "<td class='action-buttons'>
+                            <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                            <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
                           </td>";
                     echo "</tr>";
                 }
@@ -157,8 +157,7 @@ include_once '../database/conexion.php';
 
         if ($conn->query($sql) === TRUE) {
             echo "<p>Causa agregada con éxito.</p>";
-            header("Refresh:0");
-ob_end_flush(); // Recargar la página
+            header("Refresh:0"); // Recargar la página
         } else {
             echo "<p>Error al agregar causa: " . $conn->error . "</p>";
             echo "<p>Consulta ejecutada: $sql</p>";
