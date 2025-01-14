@@ -1,5 +1,5 @@
 <?php
-// views/seguimiento.php
+// views/seguimientos.php
 include_once '../database/conexion.php';
 ?>
 <!DOCTYPE html>
@@ -14,7 +14,7 @@ include_once '../database/conexion.php';
     <h1>Seguimiento de Causas</h1>
 
     <!-- Formulario para registrar un paso procesal -->
-    <form action="seguimiento.php" method="POST">
+    <form action="seguimientos.php" method="POST">
         <label for="causa_id">Causa (Expediente):</label>
         <select id="causa_id" name="causa_id" required>
             <?php
@@ -33,10 +33,19 @@ include_once '../database/conexion.php';
             <?php
             $estados = $conn->query("SELECT ID, Descripcion FROM Estados");
             while ($estado = $estados->fetch_assoc()) {
-                echo "<option value='{$estado['ID']}'>{$estado['Descripcion']}</option>";
+                echo "<option value='{$estado['ID']}'>" . htmlspecialchars($estado['Descripcion']) . "</option>";
             }
             ?>
+            <option value="add">Agregar un nuevo estado</option>
         </select>
+
+        <script>
+            document.getElementById('estado_id').addEventListener('change', function () {
+                if (this.value === 'add') {
+                    window.location.href = 'estados.php?return=seguimientos.php';
+                }
+            });
+        </script>
 
         <label for="fecha_movimiento">Fecha de Movimiento:</label>
         <input type="date" id="fecha_movimiento" name="fecha_movimiento" required>
@@ -75,7 +84,7 @@ include_once '../database/conexion.php';
                     echo "<td>{$row['ID']}</td>";
                     echo "<td>{$row['Causa']}</td>";
                     echo "<td>{$row['Detalle']}</td>";
-                    echo "<td>{$row['Estado']}</td>";
+                    echo "<td>" . htmlspecialchars($row['Estado']) . "</td>";
                     echo "<td>{$row['Fecha_Movimiento']}</td>";
                     echo "<td>{$row['Timestamp']}</td>";
                     echo "<td>
@@ -95,9 +104,9 @@ include_once '../database/conexion.php';
     // Procesar formulario de registro
     if (isset($_POST['registrar'])) {
         $causa_id = $_POST['causa_id'];
-        $detalle = $_POST['detalle'];
+        $detalle = $conn->real_escape_string($_POST['detalle']);
         $estado_id = $_POST['estado_id'];
-        $fecha_movimiento = $_POST['fecha_movimiento'];
+        $fecha_movimiento = $conn->real_escape_string($_POST['fecha_movimiento']);
 
         $sql = "INSERT INTO Seguimiento (Causa_ID, Detalle, Estado_ID, Fecha_Movimiento) 
                 VALUES ('$causa_id', '$detalle', '$estado_id', '$fecha_movimiento')";
@@ -106,7 +115,8 @@ include_once '../database/conexion.php';
             echo "<p>Paso procesal registrado con éxito.</p>";
             header("Refresh:0"); // Recargar la página
         } else {
-            echo "<p>Error al registrar paso procesal: " . $conn->error . "</p>";
+            echo "<p>Error al registrar el paso procesal: " . $conn->error . "</p>";
+            echo "<p>Consulta ejecutada: $sql</p>";
         }
     }
     ?>
