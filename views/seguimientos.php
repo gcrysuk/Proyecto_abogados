@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // views/seguimientos.php
 include_once '../database/conexion.php';
 ?>
@@ -113,7 +114,13 @@ include_once '../database/conexion.php';
 
         if ($conn->query($sql) === TRUE) {
             echo "<p>Paso procesal registrado con éxito.</p>";
-            header("Refresh:0"); // Recargar la página
+            if (!headers_sent()) {
+                header("Location: seguimientos.php");
+                ob_end_flush();
+                exit;
+            } else {
+                echo "<p>Los encabezados ya fueron enviados. Por favor, recarga la página manualmente.</p>";
+            }
         } else {
             echo "<p>Error al registrar el paso procesal: " . $conn->error . "</p>";
             echo "<p>Consulta ejecutada: $sql</p>";
