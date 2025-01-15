@@ -12,74 +12,74 @@ include_once '../database/conexion.php';
     <title>Gestión de Clientes</title>
     <link rel="stylesheet" href="../css/estilos.css">
     <style>
-        body {
-            margin: 0 1cm;
-            /* Márgenes laterales */
-        }
+    body {
+        margin: 0 1cm;
+        /* Márgenes laterales */
+    }
 
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            width: 400px;
-            max-width: 90%;
-        }
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        width: 400px;
+        max-width: 90%;
+    }
 
-        .popup-header {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
+    .popup-header {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
 
-        .popup button {
-            background-color: #007BFF;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    .popup button {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-        .popup button:hover {
-            background-color: #0056b3;
-        }
+    .popup button:hover {
+        background-color: #0056b3;
+    }
 
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
 
-        .add-client-btn {
-            display: flex;
-            align-items: center;
-            background-color: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-bottom: 15px;
-            cursor: pointer;
-        }
+    .add-client-btn {
+        display: flex;
+        align-items: center;
+        background-color: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-bottom: 15px;
+        cursor: pointer;
+    }
 
-        .add-client-btn i {
-            margin-right: 5px;
-        }
+    .add-client-btn i {
+        margin-right: 5px;
+    }
 
-        .add-client-btn:hover {
-            background-color: #218838;
-        }
+    .add-client-btn:hover {
+        background-color: #218838;
+    }
     </style>
 </head>
 
@@ -182,36 +182,36 @@ include_once '../database/conexion.php';
     </div>
 
     <script>
-        function openPopup() {
-            document.getElementById('popup').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-        }
+    function openPopup() {
+        document.getElementById('popup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }
 
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
+    function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    }
 
-        function filterTable(columnIndex) {
-            const inputs = document.querySelectorAll('.filter-container input');
-            const table = document.getElementById('clientesTable');
-            const rows = table.querySelectorAll('tbody tr');
+    function filterTable(columnIndex) {
+        const inputs = document.querySelectorAll('.filter-container input');
+        const table = document.getElementById('clientesTable');
+        const rows = table.querySelectorAll('tbody tr');
 
-            rows.forEach(row => {
-                let visible = true;
-                inputs.forEach((input, index) => {
-                    const cell = row.cells[index];
-                    if (cell && input.value) {
-                        const text = cell.textContent.toLowerCase();
-                        const search = input.value.toLowerCase();
-                        if (!text.includes(search)) {
-                            visible = false;
-                        }
+        rows.forEach(row => {
+            let visible = true;
+            inputs.forEach((input, index) => {
+                const cell = row.cells[index];
+                if (cell && input.value) {
+                    const text = cell.textContent.toLowerCase();
+                    const search = input.value.toLowerCase();
+                    if (!text.includes(search)) {
+                        visible = false;
                     }
-                });
-                row.style.display = visible ? '' : 'none';
+                }
             });
-        }
+            row.style.display = visible ? '' : 'none';
+        });
+    }
     </script>
 
     <?php
