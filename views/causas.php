@@ -97,23 +97,652 @@ include_once '../database/conexion.php';
                     LEFT JOIN Objeto ON Causas.Objeto_ID = Objeto.ID
                     $result = $conn->query($sql);
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<td>{$row[\"Numero_Expediente\"]}</td>";
-                    echo "<td>{$row[\"Caratula\"]}</td>";
-                    echo "<td>{$row[\"ClienteNombre\"]} - {$row[\"ClienteDNI\"]} </td>";
-                    echo "<td>{$row[\"Juzgado\"]}</td>";
-                    echo "<td>{$row[\"Objeto\"]}</td>";
-                    echo "<td>{$row['Fecha_Alta']}</td>";
-                    echo "<td class=\"action-buttons\">
-                            <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
-                            <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
-                          </td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
-            }
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
+           if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>{$row['Numero_Expediente']}</td>";
+        echo "<td>{$row['Caratula']}</td>";
+        echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+        echo "<td>{$row['Juzgado']}</td>";
+        echo "<td>{$row['Objeto']}</td>";
+        echo "<td>{$row['Fecha_Alta']}</td>";
+        echo "<td class='action-buttons'>
+                <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
+                <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
+              </td>";
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+}
+Cambios realizados:
+Comillas simples:
+
+Se cambiaron las comillas dobles " internas por comillas simples ' para evitar conflictos.
+Esto afecta las variables como {$row['Numero_Expediente']}.
+Escapar comillas en atributos HTML:
+
+Dentro del atributo onclick, las comillas dobles fueron escapadas (\").
+¿Por qué ocurría el error?
+El uso mixto de comillas sin escaparlas correctamente causaba que PHP interpretara erróneamente el final de las cadenas.
+
+Prueba este código actualizado y avísame si necesitas más ayuda. 😊
+
+
+
+
+
+
+
+
             ?>
         </tbody>
     </table>
