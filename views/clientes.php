@@ -11,20 +11,29 @@ include_once '../database/conexion.php';
     <title>Gestión de Clientes</title>
     <link rel="stylesheet" href="../css/estilos.css">
     <style>
-        /* Filtros estilizados */
+        /* Contenedor de filtros alineado con la tabla */
         .filter-container {
-            margin-bottom: 15px;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #007BFF;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: white;
         }
 
         .filter-container input {
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            width: calc(25% - 10px);
-            min-width: 200px;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 20%;
+            min-width: 150px;
+        }
+
+        .filter-container input::placeholder {
+            color: #888;
         }
 
         /* Tabla estilizada */
@@ -99,7 +108,6 @@ include_once '../database/conexion.php';
     <hr>
 
     <!-- Filtros para la tabla -->
-    <h2>Lista de Clientes</h2>
     <div class="filter-container">
         <input type="text" id="filterDNI" placeholder="Filtrar por DNI" oninput="filterTable(0)">
         <input type="text" id="filterNombre" placeholder="Filtrar por Nombre" oninput="filterTable(1)">
