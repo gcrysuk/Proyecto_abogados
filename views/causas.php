@@ -146,17 +146,17 @@ include_once '../database/conexion.php';
     <h2>Lista de Causas</h2>
     <table>
         <div class="filter-container"
-            style="display: flex; justify-content: space-between; gap: 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px;">
+            style="background-color: #007BFF; padding: 10px; border-radius: 5px; display: flex; justify-content: space-between; gap: 10px; margin-bottom: 15px;">
             <input type="text" id="filterNumero" placeholder="Filtrar por Número de Expediente" oninput="filterTable(0)"
-                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
             <input type="text" id="filterCaratula" placeholder="Filtrar por Carátula" oninput="filterTable(1)"
-                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
             <input type="text" id="filterCliente" placeholder="Filtrar por Cliente (DNI)" oninput="filterTable(2)"
-                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
             <input type="text" id="filterJuzgado" placeholder="Filtrar por Juzgado" oninput="filterTable(3)"
-                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
             <input type="text" id="filterObjeto" placeholder="Filtrar por Objeto" oninput="filterTable(4)"
-                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
         </div>
         <thead>
             <tr>
