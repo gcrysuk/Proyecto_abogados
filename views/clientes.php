@@ -255,8 +255,8 @@ include_once '../database/conexion.php';
 
     <!-- Filtros para la tabla -->
     <div class="filter-container">
-        <input type="text" id="filterDNI" placeholder="Filtrar por DNI" oninput="filterTable(0)">
-        <input type="text" id="filterNombre" placeholder="Filtrar por Nombre" oninput="filterTable(1)">
+        <input type="text" id="filterNombre" placeholder="Filtrar por Nombre" oninput="filterTable(0)">
+        <input type="text" id="filterDNI" placeholder="Filtrar por DNI" oninput="filterTable(1)">
         <input type="text" id="filterContacto" placeholder="Filtrar por Contacto" oninput="filterTable(2)">
         <input type="text" id="filterOtrosDatos" placeholder="Filtrar por Otros Datos" oninput="filterTable(3)">
     </div>
