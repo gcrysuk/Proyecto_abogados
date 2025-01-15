@@ -17,58 +17,60 @@ include_once '../database/conexion.php';
 <body>
     <header>Gestión de Causas</header>
 
-    <!-- Formulario para agregar una causa -->
-    <form action="causas.php" method="POST">
-        <label for="numero_expediente">Número de Expediente:</label>
-        <input type="text" id="numero_expediente" name="numero_expediente" required>
+    <!-- Botón para abrir el formulario en un popup -->
+    <div class="add-client-btn" onclick="openPopup()">
+        <i class="fas fa-folder-plus"></i> Agregar Causa
+    </div>
 
-        <label for="cliente_dni">Cliente (DNI):</label>
-        <select id="cliente_dni" name="cliente_dni" required>
-            <?php
-            $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
-            while ($cliente = $clientes->fetch_assoc()) {
-                echo "<option value='{$cliente['Nombre']} - {$cliente['DNI']}'>DNI: {$cliente['DNI']} </option>";
-            }
-            ?>
-            <option value="add">Agregar un nuevo cliente</option>
-        </select>
+    <!-- Popup para agregar una nueva causa -->
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup">
+        <div class="popup-header">Agregar Nueva Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
 
-        <script>
-        document.getElementById('cliente_dni').addEventListener('change', function() {
-            if (this.value === 'add') {
-                window.location.href = 'clientes.php?return=causas.php';
-            }
-        });
-        </script>
+            <label for="cliente_dni">Cliente (DNI):</label>
+            <select id="cliente_dni" name="cliente_dni" required>
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
+                }
+                ?>
+                <option value="add">Agregar un nuevo cliente</option>
+            </select>
 
-        <label for="juzgado_id">Juzgado:</label>
-        <select id="juzgado_id" name="juzgado_id" required>
-            <?php
-            $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
-            while ($juzgado = $juzgados->fetch_assoc()) {
-                echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
-            }
-            ?>
-        </select>
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
 
-        <label for="objeto_id">Objeto:</label>
-        <select id="objeto_id" name="objeto_id" required>
-            <?php
-            $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
-            while ($objeto = $objetos->fetch_assoc()) {
-                echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
-            }
-            ?>
-        </select>
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
 
-        <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" name="descripcion"></textarea>
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
 
-        <label for="fecha_alta">Fecha de Alta:</label>
-        <input type="date" id="fecha_alta" name="fecha_alta" required>
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
 
-        <button type="submit" name="agregar">Agregar Causa</button>
-    </form>
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closePopup()">Cancelar</button>
+        </form>
+    </div>
 
     <hr>
 
@@ -87,65 +89,21 @@ include_once '../database/conexion.php';
             </tr>
         </thead>
         <tbody>
-            <?php
-            $sql = "SELECT Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre, 
-						Juzgados.Nombre AS Juzgado, Objeto.Descripcion AS Objeto, 
-						Causas.Descripcion AS Caratula, Fecha_Alta
-					FROM Causas
-					LEFT JOIN Clientes ON Causas.Cliente_DNI = Clientes.DNI
-					LEFT JOIN Juzgados ON Causas.Juzgado_ID = Juzgados.ID
-					LEFT JOIN Objeto ON Causas.Objeto_ID = Objeto.ID";
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>{$row['Numero_Expediente']}</td>";
-                    echo "<td>{$row['Caratula']}</td>";
-                    echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
-                    echo "<td>{$row['Juzgado']}</td>";
-                    echo "<td>{$row['Objeto']}</td>";
-                    echo "<td>{$row['Fecha_Alta']}</td>";
-                    echo "<td class=\"action-buttons\">
-							<a class=\"edit\" href=\"editar_causa.php?numero_expediente={$row['Numero_Expediente']}\"><i class=\"fas fa-edit\"></i> Editar</a>
-							<a class=\"delete\" href=\"eliminar_causa.php?numero_expediente={$row['Numero_Expediente']}\" onclick=\"return confirm('¿Estás seguro de eliminar esta causa?');\"><i class=\"fas fa-trash-alt\"></i> Eliminar</a>
-						</td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "<tr><td colspan='7'>No hay causas registradas.</td></tr>";
-            }
-            ?>
+            <!-- Código de lista dinámica -->
         </tbody>
     </table>
 
-    <?php
-    // Procesar formulario de agregar causa
-    if (isset($_POST['agregar'])) {
-        $numero_expediente = $_POST['numero_expediente'];
-        $cliente_dni = $_POST['cliente_dni'];
-        $juzgado_id = $_POST['juzgado_id'];
-        $objeto_id = $_POST['objeto_id'];
-        $descripcion = $conn->real_escape_string($_POST['descripcion']);
-        $fecha_alta = $conn->real_escape_string($_POST['fecha_alta']);
-
-        $sql = "INSERT INTO Causas (Numero_Expediente, Cliente_DNI, Juzgado_ID, Objeto_ID,Descripcion, Fecha_Alta) 
-                VALUES ('$numero_expediente', '$cliente_dni', '$juzgado_id', '$objeto_id', '$descripcion', '$fecha_alta')";
-
-        if ($conn->query($sql) === TRUE) {
-            echo "<p>Causa agregada con éxito.</p>";
-            if (!headers_sent()) {
-                header("Refresh:0");
-                ob_end_flush();
-            } else {
-                echo "<p>Los encabezados ya fueron enviados. Por favor, recarga la página manualmente.</p>";
-            } // Recargar la página
-        } else {
-            echo "<p>Error al agregar causa: " . $conn->error . "</p>";
-            echo "<p>Consulta ejecutada: $sql</p>";
-        }
+    <script>
+    function openPopup() {
+        document.getElementById('popup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
     }
-    ?>
+
+    function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    }
+    </script>
 </body>
 
 </html>
