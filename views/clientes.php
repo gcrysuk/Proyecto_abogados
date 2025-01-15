@@ -11,106 +11,106 @@ include_once '../database/conexion.php';
     <title>Gestión de Clientes</title>
     <link rel="stylesheet" href="../css/estilos.css">
     <style>
-    body {
-        margin: 0 1cm;
-        /* Márgenes laterales */
-    }
+        body {
+            margin: 0 1cm;
+            /* Márgenes laterales */
+        }
 
-    /* Contenedor de filtros alineado con la tabla */
-    .filter-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #007BFF;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        color: white;
-    }
+        /* Contenedor de filtros alineado con la tabla */
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #007BFF;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: white;
+        }
 
-    .filter-container input {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-        width: 20%;
-        min-width: 150px;
-    }
+        .filter-container input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 20%;
+            min-width: 150px;
+        }
 
-    .filter-container input::placeholder {
-        color: #888;
-    }
+        .filter-container input::placeholder {
+            color: #888;
+        }
 
-    /* Tabla estilizada */
-    #clientesTable {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
+        /* Tabla estilizada */
+        #clientesTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-    #clientesTable th {
-        background-color: #007BFF;
-        color: white;
-        text-align: left;
-        padding: 10px;
-    }
+        #clientesTable th {
+            background-color: #007BFF;
+            color: white;
+            text-align: left;
+            padding: 10px;
+        }
 
-    #clientesTable td {
-        padding: 10px;
-        border: 1px solid #ddd;
-    }
+        #clientesTable td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
 
-    #clientesTable tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
+        #clientesTable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
 
-    /* Botones estilizados */
-    .action-buttons a {
-        text-decoration: none;
-        padding: 5px 10px;
-        border-radius: 4px;
-        color: white;
-    }
+        /* Botones estilizados */
+        .action-buttons a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: white;
+        }
 
-    .action-buttons .edit {
-        background-color: #28a745;
-    }
+        .action-buttons .edit {
+            background-color: #28a745;
+        }
 
-    .action-buttons .edit:hover {
-        background-color: #218838;
-    }
+        .action-buttons .edit:hover {
+            background-color: #218838;
+        }
 
-    .action-buttons .delete {
-        background-color: #dc3545;
-    }
+        .action-buttons .delete {
+            background-color: #dc3545;
+        }
 
-    .action-buttons .delete:hover {
-        background-color: #c82333;
-    }
+        .action-buttons .delete:hover {
+            background-color: #c82333;
+        }
 
-    /* Paginación */
-    .pagination {
-        margin: 20px 0;
-        text-align: center;
-    }
+        /* Paginación */
+        .pagination {
+            margin: 20px 0;
+            text-align: center;
+        }
 
-    .pagination button {
-        padding: 10px 15px;
-        margin: 0 5px;
-        border: none;
-        background-color: #007BFF;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+        .pagination button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    .pagination button.active {
-        background-color: #0056b3;
-    }
+        .pagination button.active {
+            background-color: #0056b3;
+        }
 
-    .pagination button:hover {
-        background-color: #0056b3;
-    }
+        .pagination button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 
@@ -203,26 +203,26 @@ include_once '../database/conexion.php';
     </div>
 
     <script>
-    function filterTable(columnIndex) {
-        const inputs = document.querySelectorAll('.filter-container input');
-        const table = document.getElementById('clientesTable');
-        const rows = table.querySelectorAll('tbody tr');
+        function filterTable(columnIndex) {
+            const inputs = document.querySelectorAll('.filter-container input');
+            const table = document.getElementById('clientesTable');
+            const rows = table.querySelectorAll('tbody tr');
 
-        rows.forEach(row => {
-            let visible = true;
-            inputs.forEach((input, index) => {
-                const cell = row.cells[index];
-                if (cell && input.value) {
-                    const text = cell.textContent.toLowerCase();
-                    const search = input.value.toLowerCase();
-                    if (!text.includes(search)) {
-                        visible = false;
+            rows.forEach(row => {
+                let visible = true;
+                inputs.forEach((input, index) => {
+                    const cell = row.cells[index];
+                    if (cell && input.value) {
+                        const text = cell.textContent.toLowerCase();
+                        const search = input.value.toLowerCase();
+                        if (!text.includes(search)) {
+                            visible = false;
+                        }
                     }
-                }
+                });
+                row.style.display = visible ? '' : 'none';
             });
-            row.style.display = visible ? '' : 'none';
-        });
-    }
+        }
     </script>
 
     <?php
@@ -239,4 +239,10 @@ include_once '../database/conexion.php';
             echo "<p>Cliente agregado con éxito.</p>";
             header("Refresh:0"); // Recargar la página
         } else {
-            echo "<p
+            echo "<p>Error al agregar cliente: " . $conn->error . "</p>";
+        }
+    }
+    ?>
+</body>
+
+</html>
