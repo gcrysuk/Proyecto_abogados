@@ -145,17 +145,18 @@ include_once '../database/conexion.php';
     <!-- Lista de causas -->
     <h2>Lista de Causas</h2>
     <table>
-        <div class="filter-container" style="margin-bottom: 15px; display: flex; gap: 10px;">
+        <div class="filter-container"
+            style="display: flex; justify-content: space-between; gap: 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px;">
             <input type="text" id="filterNumero" placeholder="Filtrar por Número de Expediente" oninput="filterTable(0)"
-                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
             <input type="text" id="filterCaratula" placeholder="Filtrar por Carátula" oninput="filterTable(1)"
-                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
             <input type="text" id="filterCliente" placeholder="Filtrar por Cliente (DNI)" oninput="filterTable(2)"
-                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
             <input type="text" id="filterJuzgado" placeholder="Filtrar por Juzgado" oninput="filterTable(3)"
-                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
             <input type="text" id="filterObjeto" placeholder="Filtrar por Objeto" oninput="filterTable(4)"
-                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                style="padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
         </div>
         <thead>
             <tr>
@@ -212,11 +213,12 @@ include_once '../database/conexion.php';
     </table>
 
     <!-- Paginación -->
-    <div class="pagination" style="text-align: center; margin-top: 20px;">
+    <div class="pagination"
+        style="text-align: center; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 5px;">
         <?php
         for ($i = 1; $i <= $total_pages; $i++) {
-            $active = $i == $page ? 'style="background-color: #007BFF; color: white;"' : '';
-            echo "<a href='causas.php?page=$i' $active style='padding: 8px 12px; margin: 5px; border: 1px solid #ddd; text-decoration: none; border-radius: 4px;'>$i</a>";
+            $active = $i == $page ? 'background-color: #007BFF; color: white;' : 'background-color: #f9f9f9; color: #007BFF;';
+            echo "<a href='causas.php?page=$i' style='padding: 8px 12px; margin: 0 5px; border: 1px solid #ddd; text-decoration: none; border-radius: 5px; $active'>$i</a>";
         }
         ?>
     </div>
