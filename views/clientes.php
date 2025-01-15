@@ -10,6 +10,70 @@ include_once '../database/conexion.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes</title>
     <link rel="stylesheet" href="../css/estilos.css">
+    <style>
+        /* Filtros estilizados */
+        .filter-container {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-container input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(25% - 10px);
+            min-width: 200px;
+        }
+
+        /* Tabla estilizada */
+        #clientesTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #clientesTable th {
+            background-color: #007BFF;
+            color: white;
+            text-align: left;
+            padding: 10px;
+        }
+
+        #clientesTable td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        #clientesTable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Botones estilizados */
+        .action-buttons a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .action-buttons .edit {
+            background-color: #28a745;
+        }
+
+        .action-buttons .edit:hover {
+            background-color: #218838;
+        }
+
+        .action-buttons .delete {
+            background-color: #dc3545;
+        }
+
+        .action-buttons .delete:hover {
+            background-color: #c82333;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,15 +100,14 @@ include_once '../database/conexion.php';
 
     <!-- Filtros para la tabla -->
     <h2>Lista de Clientes</h2>
-    <div style="margin-bottom: 15px;">
-        <label>Filtrar por columnas:</label>
+    <div class="filter-container">
         <input type="text" id="filterDNI" placeholder="Filtrar por DNI" oninput="filterTable(0)">
         <input type="text" id="filterNombre" placeholder="Filtrar por Nombre" oninput="filterTable(1)">
         <input type="text" id="filterContacto" placeholder="Filtrar por Contacto" oninput="filterTable(2)">
         <input type="text" id="filterOtrosDatos" placeholder="Filtrar por Otros Datos" oninput="filterTable(3)">
     </div>
 
-    <table border="1" id="clientesTable">
+    <table id="clientesTable">
         <thead>
             <tr>
                 <th>DNI</th>
@@ -67,9 +130,9 @@ include_once '../database/conexion.php';
                     echo "<td>{$row['Nombre']}</td>";
                     echo "<td>{$row['Contacto']}</td>";
                     echo "<td>{$row['Otros_Datos']}</td>";
-                    echo "<td>
-                            <a href='editar_cliente.php?dni={$row['DNI']}'>Editar</a>
-                            <a href='eliminar_cliente.php?dni={$row['DNI']}' onclick='return confirm(\"¿Estás seguro de eliminar este cliente?\");'>Eliminar</a>
+                    echo "<td class='action-buttons'>
+                            <a class='edit' href='editar_cliente.php?dni={$row['DNI']}'>Editar</a>
+                            <a class='delete' href='eliminar_cliente.php?dni={$row['DNI']}' onclick='return confirm(\"¿Estás seguro de eliminar este cliente?\");'>Eliminar</a>
                           </td>";
                     echo "</tr>";
                 }
@@ -82,7 +145,7 @@ include_once '../database/conexion.php';
 
     <script>
         function filterTable(columnIndex) {
-            const inputs = document.querySelectorAll('div input');
+            const inputs = document.querySelectorAll('.filter-container input');
             const table = document.getElementById('clientesTable');
             const rows = table.querySelectorAll('tbody tr');
 
