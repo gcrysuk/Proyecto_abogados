@@ -112,3 +112,16 @@ table tr:nth-child(even) {
 i {
     margin-right: 5px;
 }
+
+.popup {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+    }
+
+    .popup label,
+    .popup input,
+    .popup textarea,
+    .popup button {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+    }
