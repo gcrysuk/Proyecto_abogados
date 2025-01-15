@@ -82,17 +82,23 @@ include_once '../database/conexion.php';
 
     <script>
         function filterTable(columnIndex) {
-            const input = document.querySelectorAll('input')[columnIndex].value.toLowerCase();
+            const inputs = document.querySelectorAll('div input');
             const table = document.getElementById('clientesTable');
             const rows = table.querySelectorAll('tbody tr');
 
             rows.forEach(row => {
-                const cell = row.cells[columnIndex];
-                if (cell && cell.textContent.toLowerCase().includes(input)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+                let visible = true;
+                inputs.forEach((input, index) => {
+                    const cell = row.cells[index];
+                    if (cell && input.value) {
+                        const text = cell.textContent.toLowerCase();
+                        const search = input.value.toLowerCase();
+                        if (!text.includes(search)) {
+                            visible = false;
+                        }
+                    }
+                });
+                row.style.display = visible ? '' : 'none';
             });
         }
     </script>
