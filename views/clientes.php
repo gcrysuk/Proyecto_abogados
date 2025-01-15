@@ -122,21 +122,7 @@ include_once '../database/conexion.php';
     <h1>Gestión de Clientes</h1>
 
     <!-- Formulario para agregar un cliente -->
-    <form action="clientes.php" method="POST">
-        <label for="dni">DNI:</label>
-        <input type="text" id="dni" name="dni" required>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
-
-        <label for="contacto">Contacto:</label>
-        <input type="text" id="contacto" name="contacto">
-
-        <label for="otros_datos">Otros Datos:</label>
-        <textarea id="otros_datos" name="otros_datos"></textarea>
-
-        <button type="submit" name="agregar">Agregar Cliente</button>
-    </form>
 
     <hr>
 
@@ -244,6 +230,41 @@ include_once '../database/conexion.php';
         }
     }
     ?>
+
+    <!-- Popup for adding a new client -->
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup">
+        <div class="popup-header">Agregar Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" name="dni" required>
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="contacto">Contacto:</label>
+            <input type="text" id="contacto" name="contacto">
+
+            <label for="otros_datos">Otros Datos:</label>
+            <textarea id="otros_datos" name="otros_datos"></textarea>
+
+            <button type="submit" name="agregar">Agregar Cliente</button>
+            <button type="button" onclick="closePopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <script>
+        function openPopup() {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+
 </body>
 
 </html>
