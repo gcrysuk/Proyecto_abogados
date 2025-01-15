@@ -68,25 +68,25 @@
         <div class="card">
             <i class="fas fa-user"></i>
             <h3>Gestión de Clientes</h3>
-            <a href="clientes.php">Ir a Clientes</a>
+            <a href="views/clientes.php">Ir a Clientes</a>
         </div>
 
         <div class="card">
             <i class="fas fa-gavel"></i>
             <h3>Gestión de Causas</h3>
-            <a href="causas.php">Ir a Causas</a>
+            <a href="views/causas.php">Ir a Causas</a>
         </div>
 
         <div class="card">
             <i class="fas fa-balance-scale"></i>
             <h3>Seguimiento de Causas</h3>
-            <a href="seguimientos.php">Ir a Seguimientos</a>
+            <a href="views/seguimientos.php">Ir a Seguimientos</a>
         </div>
 
         <div class="card">
             <i class="fas fa-book"></i>
             <h3>Gestión de Estados</h3>
-            <a href="estados.php">Ir a Estados</a>
+            <a href="views/estados.php">Ir a Estados</a>
         </div>
     </div>
 </body>
