@@ -6,6 +6,7 @@ include_once '../database/conexion.php';
 <html lang="es">
 
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes</title>
@@ -115,9 +116,9 @@ include_once '../database/conexion.php';
 </head>
 
 <body>
-    <a href="../inicio.php"
-        style="display: inline-block; margin-bottom: 20px; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">&#8592;
-        Volver al Inicio</a>
+    <a href="../index.php"
+        style="display: inline-block; margin-bottom: 20px; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;"><i
+            class='fas fa-home'></i> Inicio</a>
     <h1>Gestión de Clientes</h1>
 
     <!-- Formulario para agregar un cliente -->
