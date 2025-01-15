@@ -4,22 +4,19 @@ include_once '../database/conexion.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes</title>
     <link rel="stylesheet" href="../css/estilos.css">
 </head>
+
 <body>
     <h1>Gestión de Clientes</h1>
 
-    <?php
-    // Obtener la página de regreso
-    $return_page = isset($_GET['return']) ? $_GET['return'] : 'clientes.php';
-    ?>
-
     <!-- Formulario para agregar un cliente -->
-    <form action="clientes.php?return=<?php echo htmlspecialchars($return_page); ?>" method="POST">
+    <form action="clientes.php" method="POST">
         <label for="dni">DNI:</label>
         <input type="text" id="dni" name="dni" required>
 
@@ -37,9 +34,17 @@ include_once '../database/conexion.php';
 
     <hr>
 
-    <!-- Lista de clientes -->
+    <!-- Filtros para la tabla -->
     <h2>Lista de Clientes</h2>
-    <table border="1">
+    <div style="margin-bottom: 15px;">
+        <label>Filtrar por columnas:</label>
+        <input type="text" id="filterDNI" placeholder="Filtrar por DNI" oninput="filterTable(0)">
+        <input type="text" id="filterNombre" placeholder="Filtrar por Nombre" oninput="filterTable(1)">
+        <input type="text" id="filterContacto" placeholder="Filtrar por Contacto" oninput="filterTable(2)">
+        <input type="text" id="filterOtrosDatos" placeholder="Filtrar por Otros Datos" oninput="filterTable(3)">
+    </div>
+
+    <table border="1" id="clientesTable">
         <thead>
             <tr>
                 <th>DNI</th>
@@ -75,6 +80,23 @@ include_once '../database/conexion.php';
         </tbody>
     </table>
 
+    <script>
+        function filterTable(columnIndex) {
+            const input = document.querySelectorAll('input')[columnIndex].value.toLowerCase();
+            const table = document.getElementById('clientesTable');
+            const rows = table.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const cell = row.cells[columnIndex];
+                if (cell && cell.textContent.toLowerCase().includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+
     <?php
     // Procesar formulario de agregar cliente
     if (isset($_POST['agregar'])) {
@@ -87,14 +109,12 @@ include_once '../database/conexion.php';
 
         if ($conn->query($sql) === TRUE) {
             echo "<p>Cliente agregado con éxito.</p>";
-            header("Location: " . htmlspecialchars($return_page));
-            exit;
+            header("Refresh:0"); // Recargar la página
         } else {
             echo "<p>Error al agregar cliente: " . $conn->error . "</p>";
         }
     }
     ?>
-
-    <a href="<?php echo htmlspecialchars($return_page); ?>">Volver</a>
 </body>
+
 </html>
