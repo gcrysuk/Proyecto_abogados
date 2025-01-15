@@ -100,7 +100,7 @@ include_once '../database/conexion.php';
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     echo "<tr>";
-                    echo "<td>{$row['Numero_Expediente']}</td>";
+                    echo "<td>{$row[\"Numero_Expediente\"]}</td>";
                     echo "<td>{$row['Caratula']}</td>";
                     echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']} </td>";
                     echo "<td>{$row['Juzgado']}</td>";
