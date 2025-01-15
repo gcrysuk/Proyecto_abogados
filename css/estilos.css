@@ -115,7 +115,7 @@ i {
 
 .popup {
         font-family: Arial, sans-serif;
-        font-size: 25px;
+        font-size: 14px;
     }
 
     .popup label,
@@ -123,5 +123,5 @@ i {
     .popup textarea,
     .popup button {
         font-family: Arial, sans-serif;
-        font-size: 25px;
+        font-size: 12px;
     }
