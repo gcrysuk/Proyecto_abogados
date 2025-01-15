@@ -145,7 +145,7 @@ include_once '../database/conexion.php';
     <!-- Lista de causas -->
     <h2>Lista de Causas</h2>
     <table>
-        <div class="filter-container" style="margin-bottom: 15px; display: flex; gap: 10px;">
+        <div class="filter-container">
             <input type="text" id="filterNumero" placeholder="Filtrar por Número de Expediente" oninput="filterTable(0)"
                 style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
             <input type="text" id="filterCaratula" placeholder="Filtrar por Carátula" oninput="filterTable(1)"
