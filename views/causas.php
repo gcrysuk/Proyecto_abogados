@@ -88,7 +88,7 @@ include_once '../database/conexion.php';
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre, 
+            $sql = "SELECT Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre 
                            Juzgados.Nombre AS Juzgado, Objeto.Descripcion AS Objeto, 
                            Causas.Descripcion AS Caratula, Fecha_Alta
                     FROM Causas
@@ -106,7 +106,7 @@ include_once '../database/conexion.php';
                     echo "<td>{$row['Juzgado']}</td>";
                     echo "<td>{$row['Objeto']}</td>";
                     echo "<td>{$row['Fecha_Alta']}</td>";
-                    echo "<td class='action-buttons'>
+                    echo "<td class=\"action-buttons\">
                             <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
                             <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
                           </td>";
@@ -129,8 +129,8 @@ include_once '../database/conexion.php';
         $descripcion = $conn->real_escape_string($_POST['descripcion']);
         $fecha_alta = $conn->real_escape_string($_POST['fecha_alta']);
 
-        $sql = "INSERT INTO Causas (Numero_Expediente, Cliente_DNI, Juzgado_ID, Objeto_ID,Descripcion, Fecha_Alta) 
-                VALUES ('$numero_expediente', '$cliente_dni', '$juzgado_id', '$objeto_id', '$descripcion', '$fecha_alta')";
+        $sql = "INSERT INTO Causas (Numero_Expediente, Cliente_DNI, Juzgado_ID, Objeto_ID, Descripcion, Fecha_Alta) 
+                VALUES ('$numero_expediente', '$cliente_dni', '$juzgado_id', '$objeto_id', '$descripcion', '$fecha_alta');
 
         if ($conn->query($sql) === TRUE) {
             echo "<p>Causa agregada con éxito.</p>";
