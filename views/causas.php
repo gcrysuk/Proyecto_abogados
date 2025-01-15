@@ -99,15 +99,16 @@ include_once '../database/conexion.php';
             <input type="text" id="numero_expediente" name="numero_expediente" required>
 
             <label for="cliente_dni">Cliente (DNI):</label>
-            <select id="cliente_dni" name="cliente_dni" required>
+            <input list="clientes_list" id="cliente_dni" name="cliente_dni" placeholder="Seleccione o busque un cliente"
+                required>
+            <datalist id="clientes_list">
                 <?php
                 $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
+                    echo "<option value='{$cliente['DNI']} - {$cliente['Nombre']}'></option>";
                 }
                 ?>
-                <option value="add">Agregar un nuevo cliente</option>
-            </select>
+            </datalist>
 
             <label for="juzgado_id">Juzgado:</label>
             <select id="juzgado_id" name="juzgado_id" required>
