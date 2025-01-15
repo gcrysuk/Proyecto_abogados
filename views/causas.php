@@ -5,6 +5,7 @@ include_once '../database/conexion.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@ include_once '../database/conexion.php';
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
     <header>Gestión de Causas</header>
 
@@ -25,18 +27,18 @@ include_once '../database/conexion.php';
             <?php
             $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
             while ($cliente = $clientes->fetch_assoc()) {
-                echo "<option value='{$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
+                echo "<option value='{$cliente['Nombre']} - {$cliente['DNI']}'>DNI: {$cliente['DNI']} </option>";
             }
             ?>
             <option value="add">Agregar un nuevo cliente</option>
         </select>
 
         <script>
-            document.getElementById('cliente_dni').addEventListener('change', function () {
-                if (this.value === 'add') {
-                    window.location.href = 'clientes.php?return=causas.php';
-                }
-            });
+        document.getElementById('cliente_dni').addEventListener('change', function() {
+            if (this.value === 'add') {
+                window.location.href = 'clientes.php?return=causas.php';
+            }
+        });
         </script>
 
         <label for="juzgado_id">Juzgado:</label>
@@ -59,26 +61,6 @@ include_once '../database/conexion.php';
             ?>
         </select>
 
-        <label for="perito_id">Perito:</label>
-        <select id="perito_id" name="perito_id" required>
-            <option value="">Ninguno</option>
-            <?php
-            $peritos = $conn->query("SELECT ID, Nombre FROM Peritos");
-            while ($perito = $peritos->fetch_assoc()) {
-                echo "<option value='{$perito['ID']}'>" . htmlspecialchars($perito['Nombre']) . "</option>";
-            }
-            ?>
-            <option value="add">Agregar uno nuevo</option>
-        </select>
-
-        <script>
-            document.getElementById('perito_id').addEventListener('change', function () {
-                if (this.value === 'add') {
-                    window.location.href = 'peritos.php?return=causas.php';
-                }
-            });
-        </script>
-
         <label for="descripcion">Descripción:</label>
         <textarea id="descripcion" name="descripcion"></textarea>
 
@@ -95,39 +77,34 @@ include_once '../database/conexion.php';
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Número de Expediente</th>
+                <th>Carátula</th>
                 <th>Cliente (DNI)</th>
                 <th>Juzgado</th>
                 <th>Objeto</th>
-                <th>Perito</th>
-                <th>Descripción</th>
                 <th>Fecha de Alta</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT Causas.ID, Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre, 
-                           Juzgados.Nombre AS Juzgado, Objeto.Descripcion AS Objeto, Peritos.Nombre AS Perito, 
-                           Causas.Descripcion, Fecha_Alta
+            $sql = "SELECT Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre, 
+                           Juzgados.Nombre AS Juzgado, Objeto.Descripcion AS Objeto, 
+                           Causas.Descripcion AS Caratula, Fecha_Alta
                     FROM Causas
                     LEFT JOIN Clientes ON Causas.Cliente_DNI = Clientes.DNI
                     LEFT JOIN Juzgados ON Causas.Juzgado_ID = Juzgados.ID
                     LEFT JOIN Objeto ON Causas.Objeto_ID = Objeto.ID
-                    LEFT JOIN Peritos ON Causas.Perito_ID = Peritos.ID";
-            $result = $conn->query($sql);
+                    $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     echo "<tr>";
-                    echo "<td>{$row['ID']}</td>";
                     echo "<td>{$row['Numero_Expediente']}</td>";
-                    echo "<td>{$row['ClienteDNI']} - {$row['ClienteNombre']}</td>";
+                    echo "<td>{$row['Caratula']}</td>";
+                    echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']} </td>";
                     echo "<td>{$row['Juzgado']}</td>";
                     echo "<td>{$row['Objeto']}</td>";
-                    echo "<td>" . htmlspecialchars($row['Perito']) . "</td>";
-                    echo "<td>{$row['Descripcion']}</td>";
                     echo "<td>{$row['Fecha_Alta']}</td>";
                     echo "<td class='action-buttons'>
                             <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
@@ -149,12 +126,11 @@ include_once '../database/conexion.php';
         $cliente_dni = $_POST['cliente_dni'];
         $juzgado_id = $_POST['juzgado_id'];
         $objeto_id = $_POST['objeto_id'];
-        $perito_id = empty($_POST['perito_id']) ? 'NULL' : "'" . $conn->real_escape_string($_POST['perito_id']) . "'";
         $descripcion = $conn->real_escape_string($_POST['descripcion']);
         $fecha_alta = $conn->real_escape_string($_POST['fecha_alta']);
 
-        $sql = "INSERT INTO Causas (Numero_Expediente, Cliente_DNI, Juzgado_ID, Objeto_ID, Perito_ID, Descripcion, Fecha_Alta) 
-                VALUES ('$numero_expediente', '$cliente_dni', '$juzgado_id', '$objeto_id', $perito_id, '$descripcion', '$fecha_alta')";
+        $sql = "INSERT INTO Causas (Numero_Expediente, Cliente_DNI, Juzgado_ID, Objeto_ID,Descripcion, Fecha_Alta) 
+                VALUES ('$numero_expediente', '$cliente_dni', '$juzgado_id', '$objeto_id', '$descripcion', '$fecha_alta')";
 
         if ($conn->query($sql) === TRUE) {
             echo "<p>Causa agregada con éxito.</p>";
@@ -171,4 +147,5 @@ include_once '../database/conexion.php';
     }
     ?>
 </body>
+
 </html>
