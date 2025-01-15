@@ -115,6 +115,9 @@ include_once '../database/conexion.php';
 </head>
 
 <body>
+    <a href="../inicio.php"
+        style="display: inline-block; margin-bottom: 20px; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">&#8592;
+        Volver al Inicio</a>
     <h1>Gestión de Clientes</h1>
 
     <!-- Formulario para agregar un cliente -->
