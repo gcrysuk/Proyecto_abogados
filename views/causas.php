@@ -80,6 +80,9 @@ include_once '../database/conexion.php';
 </head>
 
 <body>
+    <a href="../index.php"
+        style="display: inline-block; margin-bottom: 20px; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;"><i
+            class='fas fa-home'></i> Inicio</a>
     <header>Gestión de Causas</header>
 
     <!-- Botón para abrir el formulario en un popup -->
@@ -142,6 +145,18 @@ include_once '../database/conexion.php';
     <!-- Lista de causas -->
     <h2>Lista de Causas</h2>
     <table>
+        <div class="filter-container" style="margin-bottom: 15px; display: flex; gap: 10px;">
+            <input type="text" id="filterNumero" placeholder="Filtrar por Número de Expediente" oninput="filterTable(0)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="filterCaratula" placeholder="Filtrar por Carátula" oninput="filterTable(1)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="filterCliente" placeholder="Filtrar por Cliente (DNI)" oninput="filterTable(2)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="filterJuzgado" placeholder="Filtrar por Juzgado" oninput="filterTable(3)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="filterObjeto" placeholder="Filtrar por Objeto" oninput="filterTable(4)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
         <thead>
             <tr>
                 <th>Número de Expediente</th>
@@ -185,6 +200,29 @@ include_once '../database/conexion.php';
             ?>
         </tbody>
     </table>
+
+    <script>
+    function filterTable(columnIndex) {
+        const inputs = document.querySelectorAll('.filter-container input');
+        const table = document.querySelector('table');
+        const rows = table.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            let visible = true;
+            inputs.forEach((input, index) => {
+                const cell = row.cells[index];
+                if (cell && input.value) {
+                    const text = cell.textContent.toLowerCase();
+                    const search = input.value.toLowerCase();
+                    if (!text.includes(search)) {
+                        visible = false;
+                    }
+                }
+            });
+            row.style.display = visible ? '' : 'none';
+        });
+    }
+    </script>
 
     <script>
     function openPopup() {
