@@ -99,16 +99,53 @@ include_once '../database/conexion.php';
             <input type="text" id="numero_expediente" name="numero_expediente" required>
 
             <label for="cliente_dni">Cliente (DNI):</label>
-            <input list="clientes_list" id="cliente_dni" name="cliente_dni" placeholder="Seleccione o busque un cliente"
-                required>
-            <datalist id="clientes_list">
+            <select id="cliente_dni" name="cliente_dni" required>
+                <option value="">Seleccione o busque un cliente</option>
                 <?php
                 $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['DNI']} - {$cliente['Nombre']}'></option>";
+                    echo "<option value='{$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
                 }
                 ?>
-            </datalist>
+                <option value="add">+ Agregar Nuevo Cliente</option>
+            </select>
+
+            <script>
+            document.getElementById('cliente_dni').addEventListener('change', function() {
+                if (this.value === 'add') {
+                    openClientePopup();
+                }
+            });
+
+            function openClientePopup() {
+                const popup = document.createElement('div');
+                popup.style.position = 'fixed';
+                popup.style.top = '50%';
+                popup.style.left = '50%';
+                popup.style.transform = 'translate(-50%, -50%)';
+                popup.style.backgroundColor = 'white';
+                popup.style.padding = '20px';
+                popup.style.borderRadius = '10px';
+                popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                popup.style.zIndex = '1000';
+                popup.innerHTML = `
+                        <h2>Agregar Nuevo Cliente</h2>
+                        <form action="clientes.php" method="POST">
+                            <label for="nuevo_dni">DNI:</label>
+                            <input type="text" id="nuevo_dni" name="dni" required>
+                            <label for="nuevo_nombre">Nombre:</label>
+                            <input type="text" id="nuevo_nombre" name="nombre" required>
+                            <label for="nuevo_contacto">Contacto:</label>
+                            <input type="text" id="nuevo_contacto" name="contacto">
+                            <label for="nuevo_otros">Otros Datos:</label>
+                            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+                            <button type="submit">Guardar</button>
+                            <button type="button" onclick="document.body.removeChild(this.parentNode)">Cerrar</button>
+                        </form>
+                    `;
+                document.body.appendChild(popup);
+            }
+            </script>
 
             <label for="juzgado_id">Juzgado:</label>
             <select id="juzgado_id" name="juzgado_id" required>
