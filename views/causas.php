@@ -89,31 +89,31 @@ include_once '../database/conexion.php';
         <tbody>
             <?php
             $sql = "SELECT Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre, 
-                           Juzgados.Nombre AS Juzgado, Objeto.Descripcion AS Objeto, 
-                           Causas.Descripcion AS Caratula, Fecha_Alta
-                    FROM Causas
-                    LEFT JOIN Clientes ON Causas.Cliente_DNI = Clientes.DNI
-                    LEFT JOIN Juzgados ON Causas.Juzgado_ID = Juzgados.ID
-                    LEFT JOIN Objeto ON Causas.Objeto_ID = Objeto.ID
-                    $result = $conn->query($sql);
+						Juzgados.Nombre AS Juzgado, Objeto.Descripcion AS Objeto, 
+						Causas.Descripcion AS Caratula, Fecha_Alta
+					FROM Causas
+					LEFT JOIN Clientes ON Causas.Cliente_DNI = Clientes.DNI
+					LEFT JOIN Juzgados ON Causas.Juzgado_ID = Juzgados.ID
+					LEFT JOIN Objeto ON Causas.Objeto_ID = Objeto.ID";
+            $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     echo "<tr>";
                     echo "<td>{$row['Numero_Expediente']}</td>";
                     echo "<td>{$row['Caratula']}</td>";
-                    echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']} </td>";
+                    echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
                     echo "<td>{$row['Juzgado']}</td>";
                     echo "<td>{$row['Objeto']}</td>";
                     echo "<td>{$row['Fecha_Alta']}</td>";
-                    echo "<td class='action-buttons'>
-                            <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
-                            <a class='delete' href='eliminar_causa.php?id={$row['ID']}' onclick='return confirm(\"¿Estás seguro de eliminar esta causa?\");'><i class='fas fa-trash-alt'></i> Eliminar</a>
-                          </td>";
+                    echo "<td class=\"action-buttons\">
+							<a class=\"edit\" href=\"editar_causa.php?numero_expediente={$row['Numero_Expediente']}\"><i class=\"fas fa-edit\"></i> Editar</a>
+							<a class=\"delete\" href=\"eliminar_causa.php?numero_expediente={$row['Numero_Expediente']}\" onclick=\"return confirm('¿Estás seguro de eliminar esta causa?');\"><i class=\"fas fa-trash-alt\"></i> Eliminar</a>
+						</td>";
                     echo "</tr>";
                 }
             } else {
-                echo "<tr><td colspan='9'>No hay causas registradas.</td></tr>";
+                echo "<tr><td colspan='7'>No hay causas registradas.</td></tr>";
             }
             ?>
         </tbody>
@@ -135,11 +135,11 @@ include_once '../database/conexion.php';
         if ($conn->query($sql) === TRUE) {
             echo "<p>Causa agregada con éxito.</p>";
             if (!headers_sent()) {
-    header("Refresh:0");
-    ob_end_flush();
-} else {
-    echo "<p>Los encabezados ya fueron enviados. Por favor, recarga la página manualmente.</p>";
-} // Recargar la página
+                header("Refresh:0");
+                ob_end_flush();
+            } else {
+                echo "<p>Los encabezados ya fueron enviados. Por favor, recarga la página manualmente.</p>";
+            } // Recargar la página
         } else {
             echo "<p>Error al agregar causa: " . $conn->error . "</p>";
             echo "<p>Consulta ejecutada: $sql</p>";
