@@ -101,10 +101,10 @@ include_once '../database/conexion.php';
                 while ($row = $result->fetch_assoc()) {
                     echo "<tr>";
                     echo "<td>{$row[\"Numero_Expediente\"]}</td>";
-                    echo "<td>{$row['Caratula']}</td>";
-                    echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']} </td>";
-                    echo "<td>{$row['Juzgado']}</td>";
-                    echo "<td>{$row['Objeto']}</td>";
+                    echo "<td>{$row[\"Caratula\"]}</td>";
+                    echo "<td>{$row[\"ClienteNombre\"]} - {$row[\"ClienteDNI\"]} </td>";
+                    echo "<td>{$row[\"Juzgado\"]}</td>";
+                    echo "<td>{$row[\"Objeto\"]}</td>";
                     echo "<td>{$row['Fecha_Alta']}</td>";
                     echo "<td class=\"action-buttons\">
                             <a class='edit' href='editar_causa.php?id={$row['ID']}'><i class='fas fa-edit'></i> Editar</a>
