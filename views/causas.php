@@ -145,13 +145,17 @@ include_once '../database/conexion.php';
     <!-- Lista de causas -->
     <h2>Lista de Causas</h2>
     <table>
-        <div class="filter-container">
-            <input type="text" id="filterNumero" placeholder="Filtrar por Número de Expediente"
-                oninput="filterTable(0)">
-            <input type="text" id="filterCaratula" placeholder="Filtrar por Carátula" oninput="filterTable(1)">
-            <input type="text" id="filterCliente" placeholder="Filtrar por Cliente (DNI)" oninput="filterTable(2)">
-            <input type="text" id="filterJuzgado" placeholder="Filtrar por Juzgado" oninput="filterTable(3)">
-            <input type="text" id="filterObjeto" placeholder="Filtrar por Objeto" oninput="filterTable(4)">
+        <div class="filter-container" style="margin-bottom: 15px; display: flex; gap: 10px;">
+            <input type="text" id="filterNumero" placeholder="Filtrar por Número de Expediente" oninput="filterTable(0)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="filterCaratula" placeholder="Filtrar por Carátula" oninput="filterTable(1)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="filterCliente" placeholder="Filtrar por Cliente (DNI)" oninput="filterTable(2)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="filterJuzgado" placeholder="Filtrar por Juzgado" oninput="filterTable(3)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="filterObjeto" placeholder="Filtrar por Objeto" oninput="filterTable(4)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
         </div>
         <thead>
             <tr>
@@ -164,37 +168,58 @@ include_once '../database/conexion.php';
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody>
-            <?php
-            $sql = "SELECT Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre, 
+        <?php
+        // Paginación
+        $limit = 10;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $sql_count = "SELECT COUNT(*) AS total FROM Causas";
+        $result_count = $conn->query($sql_count);
+        $total_rows = $result_count->fetch_assoc()['total'];
+        $total_pages = ceil($total_rows / $limit);
+
+        $sql = "SELECT Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre, 
                            Juzgados.Nombre AS Juzgado, Objeto.Descripcion AS Objeto, 
                            Causas.Descripcion AS Caratula, Fecha_Alta
                     FROM Causas
                     LEFT JOIN Clientes ON Causas.Cliente_DNI = Clientes.DNI
                     LEFT JOIN Juzgados ON Causas.Juzgado_ID = Juzgados.ID
-                    LEFT JOIN Objeto ON Causas.Objeto_ID = Objeto.ID";
-            $result = $conn->query($sql);
+                    LEFT JOIN Objeto ON Causas.Objeto_ID = Objeto.ID
+                    LIMIT $limit OFFSET $offset";
+        $result = $conn->query($sql);
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>{$row['Numero_Expediente']}</td>";
-                    echo "<td>{$row['Caratula']}</td>";
-                    echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
-                    echo "<td>{$row['Juzgado']}</td>";
-                    echo "<td>{$row['Objeto']}</td>";
-                    echo "<td>{$row['Fecha_Alta']}</td>";
-                    echo "<td class=\"action-buttons\">
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>{$row['Numero_Expediente']}</td>";
+                echo "<td>{$row['Caratula']}</td>";
+                echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+                echo "<td>{$row['Juzgado']}</td>";
+                echo "<td>{$row['Objeto']}</td>";
+                echo "<td>{$row['Fecha_Alta']}</td>";
+                echo "<td class=\"action-buttons\">
                             <a class=\"edit\" href=\"editar_causa.php?numero_expediente={$row['Numero_Expediente']}\"><i class=\"fas fa-edit\"></i> Editar</a>
                             <a class=\"delete\" href=\"eliminar_causa.php?numero_expediente={$row['Numero_Expediente']}\" onclick=\"return confirm('¿Estás seguro de eliminar esta causa?');\"><i class=\"fas fa-trash-alt\"></i> Eliminar</a>
                           </td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "<tr><td colspan='7'>No hay causas registradas.</td></tr>";
+                echo "</tr>";
             }
-            ?>
+        } else {
+            echo "<tr><td colspan='7'>No hay causas registradas.</td></tr>";
+        }
+        ?>
         </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="pagination" style="text-align: center; margin-top: 20px;">
+        <?php
+        for ($i = 1; $i <= $total_pages; $i++) {
+            $active = $i == $page ? 'style="background-color: #007BFF; color: white;"' : '';
+            echo "<a href='causas.php?page=$i' $active style='padding: 8px 12px; margin: 5px; border: 1px solid #ddd; text-decoration: none; border-radius: 4px;'>$i</a>";
+        }
+        ?>
+    </div>
     </table>
 
     <script>
