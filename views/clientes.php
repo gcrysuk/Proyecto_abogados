@@ -17,100 +17,68 @@ include_once '../database/conexion.php';
             /* Márgenes laterales */
         }
 
-        /* Contenedor de filtros alineado con la tabla */
-        .filter-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #007BFF;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            color: white;
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 400px;
+            max-width: 90%;
         }
 
-        .filter-container input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            width: 20%;
-            min-width: 150px;
+        .popup-header {
+            font-size: 20px;
+            margin-bottom: 10px;
         }
 
-        .filter-container input::placeholder {
-            color: #888;
-        }
-
-        /* Tabla estilizada */
-        #clientesTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        #clientesTable th {
+        .popup button {
             background-color: #007BFF;
             color: white;
-            text-align: left;
-            padding: 10px;
-        }
-
-        #clientesTable td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-
-        #clientesTable tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        /* Botones estilizados */
-        .action-buttons a {
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            color: white;
-        }
-
-        .action-buttons .edit {
-            background-color: #28a745;
-        }
-
-        .action-buttons .edit:hover {
-            background-color: #218838;
-        }
-
-        .action-buttons .delete {
-            background-color: #dc3545;
-        }
-
-        .action-buttons .delete:hover {
-            background-color: #c82333;
-        }
-
-        /* Paginación */
-        .pagination {
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .pagination button {
-            padding: 10px 15px;
-            margin: 0 5px;
+            padding: 10px 20px;
             border: none;
-            background-color: #007BFF;
-            color: white;
             border-radius: 5px;
             cursor: pointer;
         }
 
-        .pagination button.active {
+        .popup button:hover {
             background-color: #0056b3;
         }
 
-        .pagination button:hover {
-            background-color: #0056b3;
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .add-client-btn {
+            display: flex;
+            align-items: center;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .add-client-btn i {
+            margin-right: 5px;
+        }
+
+        .add-client-btn:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -121,22 +89,32 @@ include_once '../database/conexion.php';
             class='fas fa-home'></i> Inicio</a>
     <h1>Gestión de Clientes</h1>
 
-    <!-- Formulario para agregar un cliente -->
-    <form action="clientes.php" method="POST">
-        <label for="dni">DNI:</label>
-        <input type="text" id="dni" name="dni" required>
+    <!-- Botón para abrir el formulario en un popup -->
+    <div class="add-client-btn" onclick="openPopup()">
+        <i class="fas fa-user-plus"></i> Agregar Cliente
+    </div>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup">
+        <div class="popup-header">Agregar Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" name="dni" required>
 
-        <label for="contacto">Contacto:</label>
-        <input type="text" id="contacto" name="contacto">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
 
-        <label for="otros_datos">Otros Datos:</label>
-        <textarea id="otros_datos" name="otros_datos"></textarea>
+            <label for="contacto">Contacto:</label>
+            <input type="text" id="contacto" name="contacto">
 
-        <button type="submit" name="agregar">Agregar Cliente</button>
-    </form>
+            <label for="otros_datos">Otros Datos:</label>
+            <textarea id="otros_datos" name="otros_datos"></textarea>
+
+            <button type="submit" name="agregar">Agregar Cliente</button>
+            <button type="button" onclick="closePopup()">Cancelar</button>
+        </form>
+    </div>
 
     <hr>
 
@@ -204,6 +182,16 @@ include_once '../database/conexion.php';
     </div>
 
     <script>
+        function openPopup() {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
         function filterTable(columnIndex) {
             const inputs = document.querySelectorAll('.filter-container input');
             const table = document.getElementById('clientesTable');
