@@ -104,9 +104,9 @@ include_once '../database/conexion.php';
             <select id="cliente_dni" name="cliente_dni" required style="margin-top: 10px; width: 100%;">
                 <option value="">Seleccione un cliente</option>
                 <?php
-                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                $clientes = $conn->query("SELECT Nombre, DNI FROM Clientes");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
+                    echo "<option value='{{$cliente['Nombre'] - $cliente['DNI']}'> DNI: {$cliente['DNI']}}</option>";
                 }
                 ?>
                 <option value="add">+ Agregar Nuevo Cliente</option>
@@ -142,8 +142,7 @@ include_once '../database/conexion.php';
                 popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
                 popup.style.zIndex = '1000';
                 popup.innerHTML = `
-                        <h2>Agregar Nuevo Cliente</h2>
-                        <form action="clientes.php" method="POST">
+                            <form action="clientes.php" method="POST">
                             <label for="nuevo_dni">DNI:</label>
                             <input type="text" id="nuevo_dni" name="dni" required>
                             <label for="nuevo_nombre">Nombre:</label>
