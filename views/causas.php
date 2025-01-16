@@ -106,7 +106,7 @@ include_once '../database/conexion.php';
                 <?php
                 $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
+                    echo "<option value='{$cliente['DNI']}'> {$cliente['Nombre']} - DNI: {$cliente['DNI']}</option>";
                 }
                 ?>
                 <option value="add">+ Agregar Nuevo Cliente</option>
@@ -198,7 +198,7 @@ include_once '../database/conexion.php';
                 echo "<tr>";
                 echo "<td>{$row['Numero_Expediente']}</td>";
                 echo "<td>{$row['Caratula']}</td>";
-                echo "<td>{$row['ClienteNombre']} - {$row['ClienteDNI']}</td>";
+                echo "<td>{$row['ClienteNombre']} - DNI: {$row['ClienteDNI']}</td>";
                 echo "<td>{$row['Juzgado']}</td>";
                 echo "<td>{$row['Objeto']}</td>";
                 echo "<td>{$row['Fecha_Alta']}</td>";
