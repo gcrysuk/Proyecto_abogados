@@ -157,17 +157,6 @@ include_once '../database/conexion.php';
                     `;
                 document.body.appendChild(popup);
             }
-            </script>
-            <button type="button" onclick="openClientePopup()"
-                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
-                Agregar Nuevo Cliente</button>
-
-            <script>
-            document.getElementById('cliente_dni').addEventListener('change', function() {
-                if (this.value === 'add') {
-                    openClientePopup();
-                }
-            });
 
             function openClientePopup() {
                 const popup = document.createElement('div');
