@@ -98,6 +98,9 @@ include_once '../database/conexion.php';
             <label for="numero_expediente">Número de Expediente:</label>
             <input type="text" id="numero_expediente" name="numero_expediente" required>
 
+            <label for="caratula">Carátula:</label>
+            <textarea id="caratula" name="caratula"></textarea>
+
             <label for="cliente_dni">Cliente (DNI):</label>
             <input type="text" id="cliente_dni_search" placeholder="Buscar cliente..."
                 style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
@@ -131,9 +134,6 @@ include_once '../database/conexion.php';
                 }
                 ?>
             </select>
-
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion"></textarea>
 
             <label for="fecha_alta">Fecha de Alta:</label>
             <input type="date" id="fecha_alta" name="fecha_alta" required>
