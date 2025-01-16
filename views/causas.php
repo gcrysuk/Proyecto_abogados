@@ -104,7 +104,7 @@ include_once '../database/conexion.php';
             <select id="cliente_dni" name="cliente_dni" required style="margin-top: 10px; width: 100%;">
                 <option value="">Seleccione un cliente</option>
                 <?php
-                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes ORDER BY Nombre ASC");
                 while ($cliente = $clientes->fetch_assoc()) {
                     echo "<option value='{$cliente['DNI']}'> {$cliente['Nombre']} - DNI: {$cliente['DNI']}</option>";
                 }
