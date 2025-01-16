@@ -98,13 +98,16 @@ include_once '../database/conexion.php';
             <label for="numero_expediente">Número de Expediente:</label>
             <input type="text" id="numero_expediente" name="numero_expediente" required>
 
+            <label for="caratula">Carátula:</label>
+            <textarea id="caratula" name="caratula"></textarea>
+
             <label for="cliente_dni">Cliente (DNI):</label>
             <input type="text" id="cliente_dni_search" placeholder="Buscar cliente..."
                 style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
             <select id="cliente_dni" name="cliente_dni" required style="margin-top: 10px; width: 100%;">
                 <option value="">Seleccione un cliente</option>
                 <?php
-                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes ORDER BY Nombre ASC");
                 while ($cliente = $clientes->fetch_assoc()) {
                     echo "<option value='{$cliente['DNI']}'> {$cliente['Nombre']} - DNI: {$cliente['DNI']}</option>";
                 }
@@ -131,9 +134,6 @@ include_once '../database/conexion.php';
                 }
                 ?>
             </select>
-
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion"></textarea>
 
             <label for="fecha_alta">Fecha de Alta:</label>
             <input type="date" id="fecha_alta" name="fecha_alta" required>
@@ -221,72 +221,3 @@ include_once '../database/conexion.php';
         <?php
         for ($i = 1; $i <= $total_pages; $i++) {
             $active = $i == $page ? 'background-color: #007BFF; color: white;' : 'background-color: #f9f9f9; color: #007BFF;';
-            echo "<a href='causas.php?page=$i' style='padding: 8px 12px; margin: 0 5px; border: 1px solid #ddd; text-decoration: none; border-radius: 5px; $active'>$i</a>";
-        }
-        ?>
-    </div>
-    </table>
-
-    <script>
-    function filterTable(columnIndex) {
-        const inputs = document.querySelectorAll('.filter-container input');
-        const table = document.querySelector('table');
-        const rows = table.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            let visible = true;
-            inputs.forEach((input, index) => {
-                const cell = row.cells[index];
-                if (cell && input.value) {
-                    const text = cell.textContent.toLowerCase();
-                    const search = input.value.toLowerCase();
-                    if (!text.includes(search)) {
-                        visible = false;
-                    }
-                }
-            });
-            row.style.display = visible ? '' : 'none';
-        });
-    }
-
-    function openPopup() {
-        document.getElementById('popup').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-    }
-
-    function closePopup() {
-        document.getElementById('popup').style.display = 'none';
-        document.getElementById('overlay').style.display = 'none';
-    }
-    </script>
-
-    <?php
-    // Procesar formulario de agregar causa
-    if (isset($_POST['agregar'])) {
-        $numero_expediente = $_POST['numero_expediente'];
-        $cliente_dni = $_POST['cliente_dni'];
-        $juzgado_id = $_POST['juzgado_id'];
-        $objeto_id = $_POST['objeto_id'];
-        $descripcion = $conn->real_escape_string($_POST['descripcion']);
-        $fecha_alta = $conn->real_escape_string($_POST['fecha_alta']);
-
-        $sql = "INSERT INTO Causas (Numero_Expediente, Cliente_DNI, Juzgado_ID, Objeto_ID, Descripcion, Fecha_Alta) 
-                VALUES ('$numero_expediente', '$cliente_dni', '$juzgado_id', '$objeto_id', '$descripcion', '$fecha_alta')";
-
-        if ($conn->query($sql) === TRUE) {
-            echo "<p>Causa agregada con éxito.</p>";
-            if (!headers_sent()) {
-                header("Refresh:0");
-                ob_end_flush();
-            } else {
-                echo "<p>Los encabezados ya fueron enviados. Por favor, recarga la página manualmente.</p>";
-            }
-        } else {
-            echo "<p>Error al agregar causa: " . $conn->error . "</p>";
-            echo "<p>Consulta ejecutada: $sql</p>";
-        }
-    }
-    ?>
-</body>
-
-</html>
