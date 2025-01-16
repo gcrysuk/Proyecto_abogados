@@ -97,7 +97,6 @@ include_once '../database/conexion.php';
         <form action="causas.php" method="POST">
             <label for="numero_expediente">Número de Expediente:</label>
             <input type="text" id="numero_expediente" name="numero_expediente" required>
-
             <label for="cliente_dni">Cliente (DNI):</label>
             <input type="text" id="cliente_dni_search" placeholder="Buscar cliente..."
                 style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
@@ -294,7 +293,7 @@ include_once '../database/conexion.php';
                         <?php
                 $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes ORDER BY Nombre ASC");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['DNI']}'> {$cliente['Nombre']} - DNI: {$cliente['DNI']}</option>";
+                   echo '<option value="' . $cliente['DNI'] . '">' . $cliente['Nombre'] . ' - DNI: ' . $cliente['DNI'] . '</option>';
                 }
                 ?>
                         <option value="add">+ Agregar Nuevo Cliente</option>
