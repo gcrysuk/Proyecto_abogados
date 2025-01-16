@@ -98,18 +98,15 @@ include_once '../database/conexion.php';
             <label for="numero_expediente">Número de Expediente:</label>
             <input type="text" id="numero_expediente" name="numero_expediente" required>
 
-            <label for="caratula">Carátula:</label>
-            <textarea id="caratula" name="caratula"></textarea>
-
-            <label for="cliente_dni">Cliente:</label>
+            <label for="cliente_dni">Cliente (DNI):</label>
             <input type="text" id="cliente_dni_search" placeholder="Buscar cliente..."
                 style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
             <select id="cliente_dni" name="cliente_dni" required style="margin-top: 10px; width: 100%;">
                 <option value="">Seleccione un cliente</option>
                 <?php
-                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes ORDER BY Nombre ASC");
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo '<option value="' . $cliente['DNI'] . '"> ' . $cliente['Nombre'] . ' - DNI: ' . $cliente['DNI'] . '</option>';
+                    echo "<option value='{$cliente['DNI']}'> {$cliente['Nombre']} - DNI: {$cliente['DNI']}</option>";
                 }
                 ?>
                 <option value="add">+ Agregar Nuevo Cliente</option>
@@ -135,6 +132,9 @@ include_once '../database/conexion.php';
                 ?>
             </select>
 
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
             <label for="fecha_alta">Fecha de Alta:</label>
             <input type="date" id="fecha_alta" name="fecha_alta" required>
 
@@ -143,12 +143,111 @@ include_once '../database/conexion.php';
         </form>
     </div>
 
-    <script>
-    document.getElementById('cliente_dni').addEventListener('change', function() {
-        if (this.value === 'add') {
-            openClientePopup();
+    <hr>
+
+    <!-- Lista de causas -->
+    <h2>Lista de Causas</h2>
+    <table>
+        <div class="filter-container"
+            style="background-color: #007BFF; padding: 10px; border-radius: 5px; display: flex; justify-content: space-between; gap: 10px; margin-bottom: 15px;">
+            <input type="text" id="filterNumero" placeholder="Filtrar por Número de Expediente" oninput="filterTable(0)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+            <input type="text" id="filterCaratula" placeholder="Filtrar por Carátula" oninput="filterTable(1)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+            <input type="text" id="filterCliente" placeholder="Filtrar por Cliente (DNI)" oninput="filterTable(2)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+            <input type="text" id="filterJuzgado" placeholder="Filtrar por Juzgado" oninput="filterTable(3)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+            <input type="text" id="filterObjeto" placeholder="Filtrar por Objeto" oninput="filterTable(4)"
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+        </div>
+        <thead>
+            <tr>
+                <th>Número de Expediente</th>
+                <th>Carátula</th>
+                <th>Cliente (DNI)</th>
+                <th>Juzgado</th>
+                <th>Objeto</th>
+                <th>Fecha de Alta</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <?php
+        // Paginación
+        $limit = 10;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $sql_count = "SELECT COUNT(*) AS total FROM Causas";
+        $result_count = $conn->query($sql_count);
+        $total_rows = $result_count->fetch_assoc()['total'];
+        $total_pages = ceil($total_rows / $limit);
+
+        $sql = "SELECT Numero_Expediente, Clientes.DNI AS ClienteDNI, Clientes.Nombre AS ClienteNombre, 
+                           Juzgados.Nombre AS Juzgado, Objeto.Descripcion AS Objeto, 
+                           Causas.Descripcion AS Caratula, Fecha_Alta
+                    FROM Causas
+                    LEFT JOIN Clientes ON Causas.Cliente_DNI = Clientes.DNI
+                    LEFT JOIN Juzgados ON Causas.Juzgado_ID = Juzgados.ID
+                    LEFT JOIN Objeto ON Causas.Objeto_ID = Objeto.ID
+                    LIMIT $limit OFFSET $offset";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>{$row['Numero_Expediente']}</td>";
+                echo "<td>{$row['Caratula']}</td>";
+                echo "<td>{$row['ClienteNombre']} - DNI: {$row['ClienteDNI']}</td>";
+                echo "<td>{$row['Juzgado']}</td>";
+                echo "<td>{$row['Objeto']}</td>";
+                echo "<td>{$row['Fecha_Alta']}</td>";
+                echo "<td class=\"action-buttons\">
+                            <a class=\"edit\" href=\"editar_causa.php?numero_expediente={$row['Numero_Expediente']}\"><i class=\"fas fa-edit\"></i> Editar</a>
+                            <a class=\"delete\" href=\"eliminar_causa.php?numero_expediente={$row['Numero_Expediente']}\" onclick=\"return confirm('¿Estás seguro de eliminar esta causa?');\"><i class=\"fas fa-trash-alt\"></i> Eliminar</a>
+                          </td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='7'>No hay causas registradas.</td></tr>";
         }
-    });
+        ?>
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="pagination"
+        style="text-align: center; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 5px;">
+        <?php
+        for ($i = 1; $i <= $total_pages; $i++) {
+            $active = $i == $page ? 'background-color: #007BFF; color: white;' : 'background-color: #f9f9f9; color: #007BFF;';
+            echo "<a href='causas.php?page=$i' style='padding: 8px 12px; margin: 0 5px; border: 1px solid #ddd; text-decoration: none; border-radius: 5px; $active'>$i</a>";
+        }
+        ?>
+    </div>
+    </table>
+
+    <script>
+    function filterTable(columnIndex) {
+        const inputs = document.querySelectorAll('.filter-container input');
+        const table = document.querySelector('table');
+        const rows = table.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            let visible = true;
+            inputs.forEach((input, index) => {
+                const cell = row.cells[index];
+                if (cell && input.value) {
+                    const text = cell.textContent.toLowerCase();
+                    const search = input.value.toLowerCase();
+                    if (!text.includes(search)) {
+                        visible = false;
+                    }
+                }
+            });
+            row.style.display = visible ? '' : 'none';
+        });
+    }
 
     function openPopup() {
         document.getElementById('popup').style.display = 'block';
@@ -159,37 +258,35 @@ include_once '../database/conexion.php';
         document.getElementById('popup').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
     }
-
-    function openClientePopup() {
-        const popup = document.createElement('div');
-        popup.style.position = 'fixed';
-        popup.style.top = '50%';
-        popup.style.left = '50%';
-        popup.style.transform = 'translate(-50%, -50%)';
-        popup.style.backgroundColor = 'white';
-        popup.style.padding = '20px';
-        popup.style.borderRadius = '10px';
-        popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-        popup.style.zIndex = '1000';
-        popup.innerHTML = `
-                <h2>Agregar Nuevo Cliente</h2>
-                <form action="clientes.php" method="POST">
-                    <label for="nuevo_dni">DNI:</label>
-                    <input type="text" id="nuevo_dni" name="dni" required>
-                    <label for="nuevo_nombre">Nombre:</label>
-                    <input type="text" id="nuevo_nombre" name="nombre" required>
-                    <label for="nuevo_contacto">Contacto:</label>
-                    <input type="text" id="nuevo_contacto" name="contacto">
-                    <label for="nuevo_otros">Otros Datos:</label>
-                    <textarea id="nuevo_otros" name="otros_datos"></textarea>
-                    <button type="submit">Guardar</button>
-                    <button type="button" onclick="document.body.removeChild(this.parentNode)">Cerrar</button>
-                </form>
-            `;
-        document.body.appendChild(popup);
-    }
     </script>
 
+    <?php
+    // Procesar formulario de agregar causa
+    if (isset($_POST['agregar'])) {
+        $numero_expediente = $_POST['numero_expediente'];
+        $cliente_dni = $_POST['cliente_dni'];
+        $juzgado_id = $_POST['juzgado_id'];
+        $objeto_id = $_POST['objeto_id'];
+        $descripcion = $conn->real_escape_string($_POST['descripcion']);
+        $fecha_alta = $conn->real_escape_string($_POST['fecha_alta']);
+
+        $sql = "INSERT INTO Causas (Numero_Expediente, Cliente_DNI, Juzgado_ID, Objeto_ID, Descripcion, Fecha_Alta) 
+                VALUES ('$numero_expediente', '$cliente_dni', '$juzgado_id', '$objeto_id', '$descripcion', '$fecha_alta')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "<p>Causa agregada con éxito.</p>";
+            if (!headers_sent()) {
+                header("Refresh:0");
+                ob_end_flush();
+            } else {
+                echo "<p>Los encabezados ya fueron enviados. Por favor, recarga la página manualmente.</p>";
+            }
+        } else {
+            echo "<p>Error al agregar causa: " . $conn->error . "</p>";
+            echo "<p>Consulta ejecutada: $sql</p>";
+        }
+    }
+    ?>
 </body>
 
 </html>
