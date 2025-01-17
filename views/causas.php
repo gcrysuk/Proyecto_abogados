@@ -13,35 +13,37 @@ include_once '../database/conexion.php';
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-      body {
-            margin: 30px;
-            /* Márgenes laterales */
-            
-        }
-        /* Contenedor de filtros alineado con la tabla */
-        .filter-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #007BFF;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            color: white;
-        }
+    body {
+        margin: 30px;
+        /* Márgenes laterales */
 
-        .filter-container input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            width: 20%;
-            min-width: 150px;
-        }
+    }
 
-        .filter-container input::placeholder {
-            color: #888;
-        }
+    /* Contenedor de filtros alineado con la tabla */
+    .filter-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #007BFF;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        color: white;
+    }
+
+    .filter-container input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 20%;
+        min-width: 150px;
+    }
+
+    .filter-container input::placeholder {
+        color: #888;
+    }
+
     .popup {
         display: none;
         position: fixed;
@@ -117,115 +119,9305 @@ include_once '../database/conexion.php';
     <script src="/Proyecto_abogados/js/scripts.js"></script>
 
 
-   <!-- Botón para abrir el formulario en un popup -->
+    <!-- Botón para abrir el formulario en un popup -->
     <div class="add-causa-btn" onclick="openPopup('popup1', 'overlay1')">
         <i class="fas fa-folder-plus"></i> Agregar Causa
     </div>
 
-    <!-- Primer Overlay y Popup -->
-
-    <button onclick="openPopup('popup2', 'overlay2')">Abrir segundo popup</button>
-    <button onclick="closePopup('popup1', 'overlay1')">Cerrar</button>
-</div>
-
-
+    </div>
 
     <!-- Popup para agregar causa -->
-    <div class="overlay" id="overlay" onclick="closePopup()"></div>
-    <div class="popup" id="popup">
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
         <div class="popup-header">Agregar Causa</div>
         <form action="causas.php" method="POST">
             <label for="numero_expediente">Número de Expediente:</label>
             <input type="text" id="numero_expediente" name="numero_expediente" required>
+
             <label for="cliente_dni_search">Cliente:</label>
             <!-- Campo de entrada con búsqueda dinámica -->
-             <input 
-                list="clientes_datalist" 
-                id="cliente_dni_search" 
-                name="cliente_dni" 
-                placeholder="Buscar cliente..." 
-                required
-                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
 
-                <!-- Lista de datos con opciones existentes -->
+            <!-- Lista de datos con opciones existentes -->
             <datalist id="clientes_datalist">
                 <?php
                 $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['Nombre']}' {$cliente['Nombre']} ->DNI: {$cliente['DNI']}</option>";
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
                 }
                 ?>
-                <!--<option value="add">+ Agregar Nuevo Cliente</option>-->
             </datalist>
-                
-            <script>
-                
-                const searchInput = document.getElementById('cliente_dni_search');
-                const selectElement = document.getElementById('cliente_dni');
 
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = searchInput.value.toLowerCase();
-                    for (const option of selectElement.options) {
-                        const text = option.textContent.toLowerCase();
-                        option.style.display = text.includes(searchTerm) || option.value === "" ? "block" : "none";
-                    }
-                });
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
 
-                selectElement.addEventListener('change', function() {
-                    if (selectElement.value === 'add') {
-                        openClientePopup();
-                    }
-                });
-
-            
-            </script>
-                <!-- Si quiero que utilice el popup debo cambiar la funcion "openClientePage" por "openClientePopup"-->
-                    <button type="button" onclick="openClientePopup()" 
-                    style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
-                    Agregar Nuevo Cliente</button>
-
-                    
-            <script>
-                document.getElementById('cliente_dni').addEventListener('change', function() {
-                    if (this.value === 'add') {
-                        openClientePage();
-                    }
-                });
-
-             </script> 
-
-                <label for="juzgado_id">Juzgado:</label>
-                <select id="juzgado_id" name="juzgado_id" required>
-                    <?php
-                    $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
-                    while ($juzgado = $juzgados->fetch_assoc()) {
-                        echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
-                    }
-                    ?>
-                </select>
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
 
             <label for="objeto_id">Objeto:</label>
             <select id="objeto_id" name="objeto_id" required>
                 <?php
-                    $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
-                    while ($objeto = $objetos->fetch_assoc()) {
-                        echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
-                    }
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
                 ?>
-             </select>
+            </select>
 
             <label for="descripcion">Descripción:</label>
             <textarea id="descripcion" name="descripcion"></textarea>
 
             <label for="fecha_alta">Fecha de Alta:</label>
-             <input type="date" id="fecha_alta" name="fecha_alta" required>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
 
             <button type="submit" name="agregar">Agregar Causa</button>
-            <button type="button" onclick="closePopup()">Cancelar</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
         </form>
     </div>
 
-    <hr>
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
+    <!-- Popup para agregar causa -->
+    <div class="overlay" id="overlayCausa" onclick="closeCausaPopup()"></div>
+    <div class="popup" id="popupCausa">
+        <div class="popup-header">Agregar Causa</div>
+        <form action="causas.php" method="POST">
+            <label for="numero_expediente">Número de Expediente:</label>
+            <input type="text" id="numero_expediente" name="numero_expediente" required>
+
+            <label for="cliente_dni_search">Cliente:</label>
+            <!-- Campo de entrada con búsqueda dinámica -->
+            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
+                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+
+            <!-- Lista de datos con opciones existentes -->
+            <datalist id="clientes_datalist">
+                <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']} -> DNI: {$cliente['DNI']}'></option>";
+                }
+                ?>
+            </datalist>
+
+            <!-- Botón para agregar cliente -->
+            <button type="button" onclick="openClientePopup()"
+                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                Agregar Nuevo Cliente</button>
+
+            <label for="juzgado_id">Juzgado:</label>
+            <select id="juzgado_id" name="juzgado_id" required>
+                <?php
+                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                while ($juzgado = $juzgados->fetch_assoc()) {
+                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="objeto_id">Objeto:</label>
+            <select id="objeto_id" name="objeto_id" required>
+                <?php
+                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                while ($objeto = $objetos->fetch_assoc()) {
+                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                }
+                ?>
+            </select>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion"></textarea>
+
+            <label for="fecha_alta">Fecha de Alta:</label>
+            <input type="date" id="fecha_alta" name="fecha_alta" required>
+
+            <button type="submit" name="agregar">Agregar Causa</button>
+            <button type="button" onclick="closeCausaPopup()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Popup para agregar cliente -->
+    <div class="overlay" id="overlayCliente" onclick="closeClientePopup()"></div>
+    <div class="popup" id="popupCliente">
+        <div class="popup-header">Agregar Nuevo Cliente</div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="closeClientePopup()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+    // Popup para causa
+    function openCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'block';
+        document.getElementById('overlayCausa').style.display = 'block';
+    }
+
+    function closeCausaPopup() {
+        document.getElementById('popupCausa').style.display = 'none';
+        document.getElementById('overlayCausa').style.display = 'none';
+    }
+
+    // Popup para cliente
+    function openClientePopup() {
+        document.getElementById('popupCliente').style.display = 'block';
+        document.getElementById('overlayCliente').style.display = 'block';
+    }
+
+    function closeClientePopup() {
+        document.getElementById('popupCliente').style.display = 'none';
+        document.getElementById('overlayCliente').style.display = 'none';
+    }
+    </script>
+
 
     <!-- Lista de causas -->
     <h2>Lista de Causas</h2>
@@ -310,11 +9502,11 @@ include_once '../database/conexion.php';
     </table>
 
     <script>
-    
+
     </script>
 
     <script>
-    
+
     </script>
 
     <?php
@@ -344,6 +9536,7 @@ include_once '../database/conexion.php';
         }
     }
     ?>
-   
+
 </body>
+
 </html>
