@@ -13,7 +13,7 @@ include_once '../database/conexion.php';
     <link rel="stylesheet" href="../css/estilos.css">
     <style>
         body {
-            margin: 0 1cm;
+            margin: 30px;
             /* Márgenes laterales */
         }
 

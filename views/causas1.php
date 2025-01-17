@@ -13,98 +13,79 @@ include_once '../database/conexion.php';
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-      body {
-            margin: 30px;
-            /* Márgenes laterales */
-            
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        /* Contenedor de filtros alineado con la tabla */
-        .filter-container {
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        /* Popup */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 400px;
+            display: none;
+        }
+
+        .popup-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #007BFF;
-            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .popup-header h2 {
+            margin: 0;
+        }
+
+        .popup-header button {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Botones */
+        .btn-submit, .btn-secondary {
+            padding: 10px 15px;
+            border: none;
             border-radius: 5px;
-            margin-bottom: 15px;
+            cursor: pointer;
             color: white;
         }
 
-        .filter-container input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            width: 20%;
-            min-width: 150px;
+        .btn-submit {
+            background-color: #4CAF50;
         }
 
-        .filter-container input::placeholder {
-            color: #888;
+        .btn-secondary {
+            background-color: #f44336;
         }
-    .popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        width: 400px;
-        max-width: 90%;
-    }
 
-    .popup-header {
-        font-size: 20px;
-        margin-bottom: 10px;
-    }
-
-    .popup button {
-        background-color: #007BFF;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .popup button:hover {
-        background-color: #0056b3;
-    }
-
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        display: none;
-    }
-
-    .add-causa-btn {
-        display: flex;
-        align-items: center;
-        background-color: #28a745;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 5px;
-        text-decoration: none;
-        margin-bottom: 15px;
-        cursor: pointer;
-    }
-
-    .add-causa-btn i {
-        margin-right: 5px;
-    }
-
-    .add-causa-btn:hover {
-        background-color: #218838;
-    }
+        .btn-submit:hover, .btn-secondary:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 
@@ -121,25 +102,20 @@ include_once '../database/conexion.php';
     <div class="add-causa-btn" onclick="openPopup('popup1', 'overlay1')">
         <i class="fas fa-folder-plus"></i> Agregar Causa
     </div>
-
-    <!-- Primer Overlay y Popup -->
-
-    <button onclick="openPopup('popup2', 'overlay2')">Abrir segundo popup</button>
-    <button onclick="closePopup('popup1', 'overlay1')">Cerrar</button>
-</div>
-
-
-
-    <!-- Popup para agregar causa -->
-    <div class="overlay" id="overlay" onclick="closePopup()"></div>
-    <div class="popup" id="popup">
-        <div class="popup-header">Agregar Causa</div>
+  
+<!-- Overlay y Primer Popup -->
+    <div class="overlay" id="overlay1" onclick="closePopup('popup1', 'overlay1')"></div>
+    <div class="popup" id="popup1">
+        <div class="popup-header">
+            <h2>Agregar Causa</h2>
+            <button type="button" onclick="closePopup('popup1', 'overlay1')" aria-label="Cerrar">&times;</button>
+        </div>
         <form action="causas.php" method="POST">
             <label for="numero_expediente">Número de Expediente:</label>
             <input type="text" id="numero_expediente" name="numero_expediente" required>
+
             <label for="cliente_dni_search">Cliente:</label>
-            <!-- Campo de entrada con búsqueda dinámica -->
-             <input 
+            <input 
                 list="clientes_datalist" 
                 id="cliente_dni_search" 
                 name="cliente_dni" 
@@ -147,83 +123,65 @@ include_once '../database/conexion.php';
                 required
                 style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
 
-                <!-- Lista de datos con opciones existentes -->
             <datalist id="clientes_datalist">
                 <?php
                 $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['Nombre']}' {$cliente['Nombre']} ->DNI: {$cliente['DNI']}</option>";
+                    echo "<option value='{$cliente['Nombre']}'>{$cliente['Nombre']} -> DNI: {$cliente['DNI']}</option>";
                 }
                 ?>
-                <!--<option value="add">+ Agregar Nuevo Cliente</option>-->
             </datalist>
-                
-            <script>
-                
-                const searchInput = document.getElementById('cliente_dni_search');
-                const selectElement = document.getElementById('cliente_dni');
 
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = searchInput.value.toLowerCase();
-                    for (const option of selectElement.options) {
-                        const text = option.textContent.toLowerCase();
-                        option.style.display = text.includes(searchTerm) || option.value === "" ? "block" : "none";
-                    }
-                });
-
-                selectElement.addEventListener('change', function() {
-                    if (selectElement.value === 'add') {
-                        openClientePopup();
-                    }
-                });
-
-            
-            </script>
-                <!-- Si quiero que utilice el popup debo cambiar la funcion "openClientePage" por "openClientePopup"-->
-                    <button type="button" onclick="openClientePopup()" 
-                    style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
-                    Agregar Nuevo Cliente</button>
-
-                    
-            <script>
-                document.getElementById('cliente_dni').addEventListener('change', function() {
-                    if (this.value === 'add') {
-                        openClientePage();
-                    }
-                });
-
-             </script> 
-
-                <label for="juzgado_id">Juzgado:</label>
-                <select id="juzgado_id" name="juzgado_id" required>
-                    <?php
-                    $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
-                    while ($juzgado = $juzgados->fetch_assoc()) {
-                        echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
-                    }
-                    ?>
-                </select>
-
-            <label for="objeto_id">Objeto:</label>
-            <select id="objeto_id" name="objeto_id" required>
-                <?php
-                    $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
-                    while ($objeto = $objetos->fetch_assoc()) {
-                        echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
-                    }
-                ?>
-             </select>
-
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion"></textarea>
-
-            <label for="fecha_alta">Fecha de Alta:</label>
-             <input type="date" id="fecha_alta" name="fecha_alta" required>
-
-            <button type="submit" name="agregar">Agregar Causa</button>
-            <button type="button" onclick="closePopup()">Cancelar</button>
+            <div style="margin-top: 10px;">
+                <button type="submit" name="agregar" class="btn-submit">Agregar</button>
+                <button type="button" class="btn-secondary" onclick="closePopup('popup1', 'overlay1')">Cancelar</button>
+                <button type="button" class="btn-secondary" onclick="openPopup('popup2', 'overlay2')">Nuevo Cliente</button>
+            </div>
         </form>
     </div>
+
+    <!-- Overlay y Segundo Popup -->
+    <div class="overlay" id="overlay2" onclick="closePopup('popup2', 'overlay2')"></div>
+    <div class="popup" id="popup2">
+        <div class="popup-header">
+            <h2>Agregar Nuevo Cliente</h2>
+            <button type="button" onclick="closePopup('popup2', 'overlay2')" aria-label="Cerrar">&times;</button>
+        </div>
+        <form action="clientes.php" method="POST">
+            <label for="nuevo_dni">DNI:</label>
+            <input type="text" id="nuevo_dni" name="dni" required>
+
+            <label for="nuevo_nombre">Nombre:</label>
+            <input type="text" id="nuevo_nombre" name="nombre" required>
+
+            <label for="nuevo_contacto">Contacto:</label>
+            <input type="text" id="nuevo_contacto" name="contacto">
+
+            <label for="nuevo_otros">Otros Datos:</label>
+            <textarea id="nuevo_otros" name="otros_datos"></textarea>
+
+            <div style="margin-top: 10px;">
+                <button type="submit" name="agregar" class="btn-submit">Agregar Cliente</button>
+                <button type="button" class="btn-secondary" onclick="closePopup('popup2', 'overlay2')">Cerrar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Abrir Popup
+        function openPopup(popupId, overlayId) {
+            document.getElementById(overlayId).style.display = "block";
+            document.getElementById(popupId).style.display = "block";
+        }
+
+        // Cerrar Popup
+        function closePopup(popupId, overlayId) {
+            document.getElementById(overlayId).style.display = "none";
+            document.getElementById(popupId).style.display = "none";
+        }
+    </script>
+    
+ 
 
     <hr>
 
@@ -309,13 +267,6 @@ include_once '../database/conexion.php';
     </div>
     </table>
 
-    <script>
-    
-    </script>
-
-    <script>
-    
-    </script>
 
     <?php
     // Procesar formulario de agregar causa
@@ -346,5 +297,4 @@ include_once '../database/conexion.php';
     ?>
    
 </body>
-
 </html>
