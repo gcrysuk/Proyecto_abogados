@@ -13,36 +13,35 @@ include_once '../database/conexion.php';
     <link rel="stylesheet" href="../css/estilos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-    body {
-        margin: 30px;
-        /* Márgenes laterales */
-    }
+      body {
+            margin: 30px;
+            /* Márgenes laterales */
+            
+        }
+        /* Contenedor de filtros alineado con la tabla */
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #007BFF;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: white;
+        }
 
-    /* Contenedor de filtros alineado con la tabla */
-    .filter-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #007BFF;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        color: white;
-    }
+        .filter-container input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 20%;
+            min-width: 150px;
+        }
 
-    .filter-container input {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-        width: 20%;
-        min-width: 150px;
-    }
-
-    .filter-container input::placeholder {
-        color: #888;
-    }
-
+        .filter-container input::placeholder {
+            color: #888;
+        }
     .popup {
         display: none;
         position: fixed;
@@ -114,11 +113,22 @@ include_once '../database/conexion.php';
         style="display: inline-block; margin-bottom: 20px; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;"><i
             class='fas fa-home'></i> Inicio</a>
     <header>Gestión de Causas</header>
+    <script src="/Proyecto_abogados/js/funciones.js"></script>
+    <script src="/Proyecto_abogados/js/scripts.js"></script>
 
-    <!-- Botón para abrir el formulario en un popup -->
-    <div class="add-causa-btn" onclick="openPopup()">
+
+   <!-- Botón para abrir el formulario en un popup -->
+    <div class="add-causa-btn" onclick="openPopup('popup1', 'overlay1')">
         <i class="fas fa-folder-plus"></i> Agregar Causa
     </div>
+
+    <!-- Primer Overlay y Popup -->
+
+    <button onclick="openPopup('popup2', 'overlay2')">Abrir segundo popup</button>
+    <button onclick="closePopup('popup1', 'overlay1')">Cerrar</button>
+</div>
+
+
 
     <!-- Popup para agregar causa -->
     <div class="overlay" id="overlay" onclick="closePopup()"></div>
@@ -127,178 +137,88 @@ include_once '../database/conexion.php';
         <form action="causas.php" method="POST">
             <label for="numero_expediente">Número de Expediente:</label>
             <input type="text" id="numero_expediente" name="numero_expediente" required>
-
-            <!-- <label for="cliente_dni">Cliente (DNI):</label>
-            <input type="text" id="cliente_dni_search" placeholder="Buscar cliente..."
-                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
-            <select id="cliente_dni" name="cliente_dni" required style="margin-top: 10px; width: 100%;">
-                <option value="">Seleccione un cliente</option>
-                <?php
-                $clientes = $conn->query("SELECT Nombre, DNI FROM Clientes");
-                while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['Nombre']} - {$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
-                }
-                ?>
-                <option value="add">+ Agregar Nuevo Cliente</option>
-            </select>-->
-
-            <label for="cliente_dni_search">Cliente (DNI):</label>
+            <label for="cliente_dni_search">Cliente:</label>
             <!-- Campo de entrada con búsqueda dinámica -->
-            <input list="clientes_datalist" id="cliente_dni_search" name="cliente_dni" placeholder="Buscar cliente..."
-                required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+             <input 
+                list="clientes_datalist" 
+                id="cliente_dni_search" 
+                name="cliente_dni" 
+                placeholder="Buscar cliente..." 
+                required
+                style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
 
-            <!-- Lista de datos con opciones existentes -->
+                <!-- Lista de datos con opciones existentes -->
             <datalist id="clientes_datalist">
                 <?php
                 $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes");
                 while ($cliente = $clientes->fetch_assoc()) {
-                    echo "<option value='{$cliente['DNI']}'>DNI: {$cliente['DNI']} - {$cliente['Nombre']}</option>";
+                    echo "<option value='{$cliente['Nombre']}' {$cliente['Nombre']} ->DNI: {$cliente['DNI']}</option>";
                 }
                 ?>
-                <option value="add">+ Agregar Nuevo Cliente</option>
+                <!--<option value="add">+ Agregar Nuevo Cliente</option>-->
             </datalist>
-
-            <!-- Botón para agregar un cliente nuevo (opcional) -->
-            <button type="button" onclick="abrirFormularioNuevoCliente()" style="margin-top: 10px; display: none;"
-                id="btnAgregarCliente">
-                Agregar Nuevo Cliente
-            </button>
-
+                
             <script>
-            // Mostrar el botón "Agregar Nuevo Cliente" si se selecciona la opción "add"
-            document.getElementById('cliente_dni_search').addEventListener('input', function() {
-                const value = this.value.trim().toLowerCase();
-                const btnAgregar = document.getElementById('btnAgregarCliente');
+                
+                const searchInput = document.getElementById('cliente_dni_search');
+                const selectElement = document.getElementById('cliente_dni');
 
-                if (value === 'add') {
-                    btnAgregar.style.display = 'block'; <
-                    option value = "add" > +Agregar Nuevo Cliente < /option>
-                } else {
-                    btnAgregar.style.display = 'none';
-                }
-            });
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    for (const option of selectElement.options) {
+                        const text = option.textContent.toLowerCase();
+                        option.style.display = text.includes(searchTerm) || option.value === "" ? "block" : "none";
+                    }
+                });
 
-            // Función para abrir el formulario de nuevo cliente
-            function abrirFormularioNuevoCliente() {
-                alert("Abrir formulario para agregar un nuevo cliente.");
-                // Aquí podrías mostrar un modal o redirigir a otra página.
-            }
+                selectElement.addEventListener('change', function() {
+                    if (selectElement.value === 'add') {
+                        openClientePopup();
+                    }
+                });
+
+            
             </script>
+                <!-- Si quiero que utilice el popup debo cambiar la funcion "openClientePage" por "openClientePopup"-->
+                    <button type="button" onclick="openClientePopup()" 
+                    style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
+                    Agregar Nuevo Cliente</button>
 
-
+                    
             <script>
-            const searchInput = document.getElementById('cliente_dni_search');
-            const selectElement = document.getElementById('cliente_dni');
+                document.getElementById('cliente_dni').addEventListener('change', function() {
+                    if (this.value === 'add') {
+                        openClientePage();
+                    }
+                });
 
-            searchInput.addEventListener('input', function() {
-                const searchTerm = searchInput.value.toLowerCase();
-                for (const option of selectElement.options) {
-                    const text = option.textContent.toLowerCase();
-                    option.style.display = text.includes(searchTerm) || option.value === "" ? "block" : "none";
-                }
-            });
+             </script> 
 
-            selectElement.addEventListener('change', function() {
-                if (selectElement.value === 'add') {
-                    openClientePopup();
-                }
-            });
-
-            function openClientePopup() {
-                const popup = document.createElement('div');
-                popup.style.position = 'fixed';
-                popup.style.top = '50%';
-                popup.style.left = '50%';
-                popup.style.transform = 'translate(-50%, -50%)';
-                popup.style.backgroundColor = 'white';
-                popup.style.padding = '20px';
-                popup.style.borderRadius = '10px';
-                popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-                popup.style.zIndex = '1000';
-                popup.innerHTML = `
-                        <h2>Agregar Nuevo Cliente</h2>
-                        <form action="clientes.php" method="POST">
-                            <label for="nuevo_dni">DNI:</label>
-                            <input type="text" id="nuevo_dni" name="dni" required>
-                            <label for="nuevo_nombre">Nombre:</label>
-                            <input type="text" id="nuevo_nombre" name="nombre" required>
-                            <label for="nuevo_contacto">Contacto:</label>
-                            <input type="text" id="nuevo_contacto" name="contacto">
-                            <label for="nuevo_otros">Otros Datos:</label>
-                            <textarea id="nuevo_otros" name="otros_datos"></textarea>
-                            <button type="submit">Guardar</button>
-                            <button type="button" onclick="document.body.removeChild(this.parentNode)">Cerrar</button>
-                        </form>
-                    `;
-                document.body.appendChild(popup);
-            }
-            </script>
-            <button type="button" onclick="openClientePopup()"
-                style="margin-top: 10px; background-color: #007BFF; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">+
-                Agregar Nuevo Cliente</button>
-
-            <script>
-            document.getElementById('cliente_dni').addEventListener('change', function() {
-                if (this.value === 'add') {
-                    openClientePopup();
-                }
-            });
-
-            function openClientePopup() {
-                const popup = document.createElement('div');
-                popup.style.position = 'fixed';
-                popup.style.top = '50%';
-                popup.style.left = '50%';
-                popup.style.transform = 'translate(-50%, -50%)';
-                popup.style.backgroundColor = 'white';
-                popup.style.padding = '20px';
-                popup.style.borderRadius = '10px';
-                popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-                popup.style.zIndex = '1000';
-                popup.innerHTML = `
-                        <h2>Agregar Nuevo Cliente</h2>
-                        <form action="clientes.php" method="POST">
-                            <label for="nuevo_dni">DNI:</label>
-                            <input type="text" id="nuevo_dni" name="dni" required>
-                            <label for="nuevo_nombre">Nombre:</label>
-                            <input type="text" id="nuevo_nombre" name="nombre" required>
-                            <label for="nuevo_contacto">Contacto:</label>
-                            <input type="text" id="nuevo_contacto" name="contacto">
-                            <label for="nuevo_otros">Otros Datos:</label>
-                            <textarea id="nuevo_otros" name="otros_datos"></textarea>
-                            <button type="submit">Guardar</button>
-                            <button type="button" onclick="document.body.removeChild(this.parentNode)">Cerrar</button>
-                        </form>
-                    `;
-                document.body.appendChild(popup);
-            }
-            </script>
-
-            <label for="juzgado_id">Juzgado:</label>
-            <select id="juzgado_id" name="juzgado_id" required>
-                <?php
-                $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
-                while ($juzgado = $juzgados->fetch_assoc()) {
-                    echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
-                }
-                ?>
-            </select>
+                <label for="juzgado_id">Juzgado:</label>
+                <select id="juzgado_id" name="juzgado_id" required>
+                    <?php
+                    $juzgados = $conn->query("SELECT ID, Nombre FROM Juzgados");
+                    while ($juzgado = $juzgados->fetch_assoc()) {
+                        echo "<option value='{$juzgado['ID']}'>{$juzgado['Nombre']}</option>";
+                    }
+                    ?>
+                </select>
 
             <label for="objeto_id">Objeto:</label>
             <select id="objeto_id" name="objeto_id" required>
                 <?php
-                $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
-                while ($objeto = $objetos->fetch_assoc()) {
-                    echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
-                }
+                    $objetos = $conn->query("SELECT ID, Descripcion FROM Objeto");
+                    while ($objeto = $objetos->fetch_assoc()) {
+                        echo "<option value='{$objeto['ID']}'>{$objeto['Descripcion']}</option>";
+                    }
                 ?>
-            </select>
+             </select>
 
             <label for="descripcion">Descripción:</label>
             <textarea id="descripcion" name="descripcion"></textarea>
 
             <label for="fecha_alta">Fecha de Alta:</label>
-            <input type="date" id="fecha_alta" name="fecha_alta" required>
+             <input type="date" id="fecha_alta" name="fecha_alta" required>
 
             <button type="submit" name="agregar">Agregar Causa</button>
             <button type="button" onclick="closePopup()">Cancelar</button>
@@ -390,38 +310,11 @@ include_once '../database/conexion.php';
     </table>
 
     <script>
-    function filterTable(columnIndex) {
-        const inputs = document.querySelectorAll('.filter-container input');
-        const table = document.querySelector('table');
-        const rows = table.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            let visible = true;
-            inputs.forEach((input, index) => {
-                const cell = row.cells[index];
-                if (cell && input.value) {
-                    const text = cell.textContent.toLowerCase();
-                    const search = input.value.toLowerCase();
-                    if (!text.includes(search)) {
-                        visible = false;
-                    }
-                }
-            });
-            row.style.display = visible ? '' : 'none';
-        });
-    }
+    
     </script>
 
     <script>
-    function openPopup() {
-        document.getElementById('popup').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-    }
-
-    function closePopup() {
-        document.getElementById('popup').style.display = 'none';
-        document.getElementById('overlay').style.display = 'none';
-    }
+    
     </script>
 
     <?php
@@ -451,6 +344,6 @@ include_once '../database/conexion.php';
         }
     }
     ?>
+   
 </body>
-
 </html>
