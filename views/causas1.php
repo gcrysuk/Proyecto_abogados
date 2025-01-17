@@ -118,7 +118,7 @@ include_once '../database/conexion.php';
             <label for="descripcion">Carátula:</label>
             <textarea id="descripcion" name="descripcion"></textarea>
             
-            <label for="cliente_dni_search">Cliente:</label>
+             <label for="cliente_dni_search">Cliente:</label>
             <input 
                 list="clientes_datalist" 
                 id="cliente_dni_search" 
@@ -127,37 +127,35 @@ include_once '../database/conexion.php';
                 required
                 style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
 
-           <datalist id="clientes_datalist">
-           <?php
-               $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes ORDER BY Nombre ASC");
-               while ($cliente = $clientes->fetch_assoc()) {
-                   echo "<option value='{$cliente['Nombre']}' data-dni='{$cliente['DNI']}'>{$cliente['Nombre']} -> DNI: {$cliente['DNI']}</option>";
-               }
-            ?>
-           </datalist>
-            
-                  
+            <datalist id="clientes_datalist">
+            <?php
+                $clientes = $conn->query("SELECT DNI, Nombre FROM Clientes ORDER BY Nombre ASC");
+                while ($cliente = $clientes->fetch_assoc()) {
+                    echo "<option value='{$cliente['Nombre']}' data-dni='{$cliente['DNI']}'>{$cliente['Nombre']} -> DNI: {$cliente['DNI']}</option>";
+                }
+                ?>
+            </datalist>
             <!-- Campo oculto para almacenar el DNI -->
-            <input type="hidden" id="cliente_dni" name="cliente_dni">
-
-            <script>
-                const searchInput = document.getElementById('cliente_dni_search');
-                const hiddenDniInput = document.getElementById('cliente_dni');
-                const datalist = document.getElementById('clientes_datalist');
-
-                // Cuando el usuario selecciona un valor del datalist
-                searchInput.addEventListener('input', () => {
-                    const selectedOption = Array.from(datalist.options).find(option => option.value === searchInput.value);
-                
-                    if (selectedOption) {
-                        // Extraer el DNI del atributo data-dni y asignarlo al campo oculto
-                        hiddenDniInput.value = selectedOption.getAttribute('data-dni');
-                    } else {
-                        // Si no hay coincidencia, limpiar el campo oculto
-                        hiddenDniInput.value = '';
-                    }
-                });
-            </script>
+<input type="hidden" id="cliente_dni" name="cliente_dni">
+ 
+<script>
+    const searchInput = document.getElementById('cliente_dni_search');
+    const hiddenDniInput = document.getElementById('cliente_dni');
+    const datalist = document.getElementById('clientes_datalist');
+ 
+    // Cuando el usuario selecciona un valor del datalist
+    searchInput.addEventListener('input', () => {
+        const selectedOption = Array.from(datalist.options).find(option => option.value === searchInput.value);
+ 
+        if (selectedOption) {
+            // Extraer el DNI del atributo data-dni y asignarlo al campo oculto
+            hiddenDniInput.value = selectedOption.getAttribute('data-dni');
+        } else {
+            // Si no hay coincidencia, limpiar el campo oculto
+            hiddenDniInput.value = '';
+        }
+    });
+</script>
             <label for="juzgado_id">Juzgado:</label>
             <select id="juzgado_id" name="juzgado_id">
                 <?php
