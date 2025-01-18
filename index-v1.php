@@ -36,10 +36,10 @@
         }
 
         .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Reducir el tamaño mínimo de las cartas */
-            justify-items: center;
-            gap: 20px; /* Reducir el espacio entre las cartas */
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
             padding: 20px;
         }
 
@@ -47,9 +47,9 @@
             background-color: #ffffff;
             border-radius: 12px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            width: 260px; /* Reducir el ancho de las cartas */
+            width: 280px;
             text-align: center;
-            padding: 25px; /* Reducir el padding dentro de las cartas */
+            padding: 30px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -59,13 +59,13 @@
         }
 
         .card i {
-            font-size: 50px; /* Reducir el tamaño del ícono */
+            font-size: 60px;
             color: #3498db;
             margin-bottom: 20px;
         }
 
         .card h3 {
-            font-size: 20px; /* Reducir el tamaño del título */
+            font-size: 22px;
             color: #2c3e50;
             margin: 15px 0;
         }
@@ -84,44 +84,6 @@
 
         .card a:hover {
             background-color: #2980b9;
-        }
-
-        /* Ajustes para pantallas pequeñas */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 32px;
-            }
-
-            header p {
-                font-size: 16px;
-            }
-
-            .container {
-                grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); /* Acomodar aún más las cartas en pantallas medianas */
-            }
-        }
-
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 28px;
-            }
-
-            .card {
-                width: 100%; /* Las cartas ocupan el 100% del ancho en pantallas muy pequeñas */
-                padding: 20px;
-            }
-
-            .card i {
-                font-size: 40px; /* Reducir más el tamaño del ícono */
-            }
-
-            .card h3 {
-                font-size: 18px; /* Reducir el tamaño del título */
-            }
-
-            .card a {
-                padding: 10px 15px; /* Botón más pequeño en pantallas pequeñas */
-            }
         }
     </style>
 </head>

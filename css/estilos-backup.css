@@ -1,0 +1,360 @@
+/* General */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+
+h1,
+h2 {
+    text-align: center;
+    color: #333;
+    margin: 20px 10px;
+}
+
+/* Header */
+header {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 24px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Formulario */
+form {
+    background-color: white;
+    margin: 5px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 3px;
+    color: #555;
+    font-weight: bold;
+}
+
+form input,
+form select,
+form textarea,
+form button {
+    width: 90%;
+    padding: 5px;
+    margin-bottom: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    box-sizing: border-box;
+}
+
+form button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Tablas */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Botones de acción */
+.action-buttons a {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: white;
+}
+
+.action-buttons .edit {
+    background-color: #28a745;
+}
+
+.action-buttons .edit:hover {
+    background-color: #218838;
+}
+
+.action-buttons .delete {
+    background-color: #dc3545;
+}
+
+.action-buttons .delete:hover {
+    background-color: #c82333;
+}
+
+/* Iconos con Font Awesome */
+i {
+    margin-right: 5px;
+}
+
+/* Contenedor de filtros alineado con la tabla */
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.filter-container input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 20%;
+    min-width: 150px;
+}
+
+.filter-container input::placeholder {
+    color: #888;
+}
+
+/* Popup */
+.popup {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 0px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 450px;
+    max-width: 90%;
+}
+
+.popup button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup button:hover {
+    background-color: #0056b3;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.add-causa-btn {
+    display: flex;
+    align-items: center;
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.add-causa-btn i {
+    margin-right: 5px;
+}
+
+.add-causa-btn:hover {
+    background-color: #218838;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 999;
+}
+
+/* Popup header */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px;
+    padding: 10px 0;
+}
+
+.popup-header h2 {
+    flex-grow: 1;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+}
+
+.popup-header button {
+    background: none;
+    border: none;
+    font-size: 0.1em;
+    cursor: pointer;
+}
+
+/* Botones */
+.btn-submit,
+.btn-secondary {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+.btn-submit {
+    background-color: #4CAF50;
+}
+
+.btn-secondary {
+    background-color: #f44336;
+}
+
+.btn-submit:hover,
+.btn-secondary:hover {
+    opacity: 0.8;
+}
+
+/* Nuevos ajustes para mayor responsividad */
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    /* Ajuste para adaptarse a pantallas medianas */
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 260px;
+    text-align: center;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card i {
+    font-size: 50px;
+    color: #3498db;
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    font-size: 20px;
+    color: #2c3e50;
+    margin: 15px 0;
+}
+
+.card a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 18px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.card a:hover {
+    background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 32px;
+    }
+
+    header p {
+        font-size: 16px;
+    }
+
+    .container {
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 28px;
+    }
+
+    .card {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .card i {
+        font-size: 40px;
+    }
+
+    .card h3 {
+        font-size: 18px;
+    }
+
+    .card a {
+        padding: 10px 15px;
+    }
+}

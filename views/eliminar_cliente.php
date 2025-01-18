@@ -3,18 +3,25 @@
 include_once '../database/conexion.php';
 
 // Obtener el ID del cliente
-$id = $_GET['id'] ?? null;
-if (!$id) {
-    die("ID de cliente no proporcionado.");
+$dni = $_GET['dni'] ?? null;
+
+if (!$dni) {
+    die("DNI de cliente no proporcionado.");
 }
 
-// Eliminar cliente
-$sql = "DELETE FROM Clientes WHERE ID = $id";
-if ($conn->query($sql) === TRUE) {
+// Preparar la consulta para evitar inyecciones SQL
+$stmt = $conn->prepare("DELETE FROM Clientes WHERE DNI = ?");
+$stmt->bind_param("s", $dni);
+
+if ($stmt->execute()) {
     echo "<p>Cliente eliminado con éxito.</p>";
-    header("Location: clientes.php"); // Redirigir a la lista de clientes
+    header("Location: clientes.php"); // Redirigir a la lista de causas
     exit;
 } else {
-    echo "<p>Error al eliminar cliente: " . $conn->error . "</p>";
+    echo "<p>Error al eliminar causa: " . $conn->error . "</p>";
 }
+
+// Cerrar la conexión
+$stmt->close();
+$conn->close();
 ?>

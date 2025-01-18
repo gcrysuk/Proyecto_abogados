@@ -1,64 +1,95 @@
 /* General */
 body {
     font-family: 'Roboto', sans-serif;
+    /* Fuente moderna */
+    margin: 20px;
+    padding: 10px;
     background-color: #f5f5f5;
-    margin: 10;
-    padding: 10;
+    /* Fondo suave y claro */
+    box-sizing: border-box;
+    line-height: 1.6;
 }
 
 h1,
 h2 {
     text-align: center;
-    color: #333;
+    color: #004d40;
+    /* Azul oscuro */
+    margin: 20px 10px;
+    font-weight: 700;
+    /* Negrita */
 }
 
 /* Header */
 header {
-    background-color: #007BFF;
+    background-color: #00796b;
+    /* Azul verdeado */
     color: white;
-    padding: 10px;
+    padding: 20px;
     text-align: center;
-    font-size: 24px;
+    font-size: 28px;
+    font-weight: 500;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Formulario */
 form {
-    background-color: white;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    margin: 5px auto;
+    padding: 30px;
+    border-radius: 12px;
+    /* Bordes redondeados */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     max-width: 600px;
 }
 
 form label {
     display: block;
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: bold;
+    margin-bottom: 8px;
+    color: #00796b;
+    /* Azul verdeado */
+    font-size: 16px;
+    font-weight: 600;
 }
 
 form input,
 form select,
 form textarea,
 form button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 2px solid #00796b;
+    /* Bordes suaves */
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    border-color: #004d40;
+    /* Azul más oscuro al hacer focus */
 }
 
 form button {
-    background-color: #007BFF;
+    background-color: #00796b;
+    /* Verde azulado */
     color: white;
     border: none;
     cursor: pointer;
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 14px;
 }
 
 form button:hover {
-    background-color: #0056b3;
+    background-color: #004d40;
+    /* Verde más oscuro al pasar el ratón */
 }
 
 /* Tablas */
@@ -67,100 +98,209 @@ table {
     margin: 20px auto;
     border-collapse: collapse;
     background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
 }
 
 table th,
 table td {
-    padding: 10px;
+    padding: 12px;
     text-align: left;
-    border: 1px solid #ddd;
+    border: 1px solid #00796b;
+    /* Bordes suaves */
+    font-size: 12px;
 }
 
 table th {
-    background-color: #007BFF;
+    background-color: #00796b;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 550;
 }
 
 table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #e0f2f1;
+    /* Fondo suave para filas pares */
 }
+
 
 /* Botones de acción */
 .action-buttons a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 8px 12px;
-    margin: 0 5px;
+    /* Ajuste de tamaño */
+    margin-right: 8px;
+    /* Espaciado entre botones */
+    border: none;
     border-radius: 4px;
+    font-size: 9px;
+    /* Tamaño del texto */
     text-decoration: none;
     color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .action-buttons .edit {
-    background-color: #28a745;
+    background-color: #4caf50;
+    /* Verde para editar */
 }
 
 .action-buttons .edit:hover {
-    background-color: #218838;
+    background-color: #388e3c;
+    /* Verde más oscuro */
 }
 
 .action-buttons .delete {
-    background-color: #dc3545;
+    background-color: #f44336;
+    /* Rojo para eliminar */
 }
 
 .action-buttons .delete:hover {
-    background-color: #c82333;
+    background-color: #d32f2f;
+    /* Rojo más oscuro */
+}
+
+/* Iconos dentro de los botones */
+.action-buttons .btn i {
+    margin-right: 5px;
+    /* Espacio entre el icono y el texto */
+    font-size: 16px;
+}
+
+/* Alinear el contenido de las celdas de acción */
+td.action-buttons {
+    text-align: center;
+    vertical-align: middle;
 }
 
 /* Iconos con Font Awesome */
 i {
-    margin-right: 5px;
+    margin-right: 8px;
+    font-size: 18px;
 }
 
-.popup {
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-}
 
-.popup label,
-.popup input,
-.popup textarea,
-.popup button {
-    font-family: Arial, sans-serif;
-    font-size: 12px;
-}
+/* Contenedor de filtros alineado con la tabla 
+style="padding: 8px; border: 1px solid #ddd; width: 100%;">
+*/
 
-body {
-    margin: 30px;
-    /* Márgenes laterales */
-
-}
 
 /* Contenedor de filtros alineado con la tabla */
+
 .filter-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #007BFF;
-    padding: 10px;
-    border-radius: 5px;
+    background-color: #00796b;
+    /* Fondo verde */
+    padding: 7px;
+    border-radius: 8px;
     margin-bottom: 15px;
     color: white;
+    border: 1px;
+
 }
+
 
 .filter-container input {
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 2px solid #00796b;
+    /* Bordes suaves */
+    border-radius: 8px;
     font-size: 16px;
-    width: 20%;
-    min-width: 150px;
+    width: 22%;
+    min-width: 180px;
+    transition: border-color 0.3s ease;
 }
 
 .filter-container input::placeholder {
-    color: #888;
+    color: #004d40;
+    /* Azul oscuro para el texto de los filtros */
 }
+
+.filter-container input:focus {
+    border-color: #004d40;
+}
+
+
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+
+/* Popup Header */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px;
+    /* Reduce el espacio debajo del encabezado */
+    padding: 10px 0;
+}
+
+.popup-header h2 {
+    flex-grow: 1;
+    text-align: center;
+    margin: 0;
+    /* Asegura que no haya espacio extra */
+    padding: 0;
+    /* Limpia relleno no deseado */
+    font-size: 18px;
+    /* Ajusta el tamaño si es necesario */
+}
+
+.popup-header button {
+    background: none;
+    border: none;
+    font-size: 0.1em;
+    cursor: pointer;
+}
+
+
+.popup {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 450px;
+    max-width: 90%;
+}
+
+.popup button {
+    background-color: #00796b;
+    /* Azul verdeado */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.popup button:hover {
+    background-color: #004d40;
+}
+
+
 
 .popup {
     display: none;
@@ -195,15 +335,25 @@ body {
     background-color: #0056b3;
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    display: none;
+/*BOTONES*/
+.add-client-btn {
+    display: flex;
+    align-items: center;
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.add-client-btn i {
+    margin-right: 5px;
+}
+
+.add-client-btn:hover {
+    background-color: #218838;
 }
 
 .add-causa-btn {
@@ -224,4 +374,53 @@ body {
 
 .add-causa-btn:hover {
     background-color: #218838;
+}
+
+/* Tabla estilizada */
+#clientesTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+
+}
+
+#clientesTable th {
+    background-color: #218838;
+    color: white;
+    text-align: left;
+    padding: 8px;
+
+}
+
+#clientesTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+#clientesTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Paginación */
+.pagination {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.pagination button {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background-color: #0056b3;
+}
+
+.pagination button:hover {
+    background-color: #0056b3;
 }
