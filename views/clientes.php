@@ -66,10 +66,18 @@ include_once '../database/conexion.php';
 </head>
 
 <body>
-    <a href="../index.php"
-        style="display: inline-block; margin-bottom: 20px; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;"><i
-            class='fas fa-home'></i> Inicio</a>
-    <header>Gestión de Clientes</header>
+    <div style="position: relative; display: inline-block; width: 100%;">
+    <!-- Botón de inicio -->
+    <a href="../index.php" 
+       style="position: absolute; top: 50%; left: 50%; transform: translate(-525%, -60%); background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+        <i class="fas fa-home"></i> Inicio
+    </a>
+
+    <!-- Título Gestión de Causas -->
+    <header style="background-color: #00796b; color: white; padding: 20px; text-align: center; font-size: 28px; font-weight: 500; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        Gestión de Clientes
+    </header>
+</div>
 
     <!-- Botón para abrir el formulario en un popup -->
     <div class="add-client-btn" onclick="openPopup()">
@@ -82,7 +90,7 @@ include_once '../database/conexion.php';
         <div class="popup-header">Agregar Cliente</div>
         <form action="clientes.php" method="POST">
             <label for="dni">DNI:</label>
-            <input type="text" id="dni" name="dni" required>
+            <input type="text" id="dni" name="dni" maxlength="8" placeholder="Máximo 8 dígitos" oninput="formatNumber()" required>
 
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required>

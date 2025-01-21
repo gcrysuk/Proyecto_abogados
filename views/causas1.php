@@ -26,10 +26,18 @@ require_once '../database/conexion.php';
 
 </head>
 <body>
-    <a href="../index.php"
-        style="display: inline-block; margin-bottom: 20px; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;"><i
-            class='fas fa-home'></i> Inicio</a>
-    <header>Gestión de Causas</header>
+    <div style="position: relative; display: inline-block; width: 100%;">
+    <!-- Botón de inicio -->
+    <a href="../index.php" 
+       style="position: absolute; top: 50%; left: 50%; transform: translate(-525%, -60%); background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+        <i class="fas fa-home"></i> Inicio
+    </a>
+
+    <!-- Título Gestión de Causas -->
+    <header style="background-color: #00796b; color: white; padding: 20px; text-align: center; font-size: 28px; font-weight: 500; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        Gestión de Causas
+    </header>
+</div>
     <script src="/Proyecto_abogados/js/funciones.js"></script>
     <script src="/Proyecto_abogados/js/scripts.js"></script>
     <script src="/Proyecto_abogados/js/popup.js"></script>
@@ -218,7 +226,6 @@ require_once '../database/conexion.php';
         }
         ?>
         <?php
-echo "<a class='btn delete' href='eliminar_causa.php?numero_expediente={$row['Numero_Expediente']}' onclick=\"return confirm('¿Estás seguro de eliminar esta causa?');\">Eliminar</a>";
 ?>
         </tbody>
     </table>

@@ -14,66 +14,47 @@ include_once '../database/conexion.php';
 </head>
 
 <body>
-    <div style="position: relative; display: inline-block; width: 100%;">
-    <!-- Botón de inicio -->
-    <a href="../index.php" 
-       style="position: absolute; top: 50%; left: 50%; transform: translate(-525%, -60%); background-color:rgb(45, 136, 45); color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
-        <i class="fas fa-home"></i> Inicio
-    </a>
+    <h1>Seguimiento de Causas</h1>
 
-    <!-- Título Gestión de Causas -->
-    <header style="background-color: #00796b; color: white; padding: 20px; text-align: center; font-size: 28px; font-weight: 500; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
-        Seguimientos
-    </header>
-</div>
     <!-- Formulario para registrar un paso procesal -->
     <form action="seguimientos.php" method="POST">
-    <label for="Numero_Expediente">Causa (Expediente):</label>
-    <input 
-        list="clientes_datalist" 
-        id="Numero_Expediente" 
-        name="Numero_Expediente" 
-        placeholder="Buscar cliente..." 
-        required>
-    <datalist id="clientes_datalist">
-        <?php
-        $stmt = $conn->prepare("SELECT Causas.Numero_Expediente, Causas.Descripcion 
-                        FROM Causas
-                        ORDER BY Causas.Descripcion ASC");
-$stmt->execute();
-$result = $stmt->get_result();
-while ($row = $result->fetch_assoc()):
-?>
-    <option value="<?= htmlspecialchars($row['Numero_Expediente']) ?>">
-        <?= htmlspecialchars($row['Descripcion']) ?> - <?= htmlspecialchars($row['Numero_Expediente']) ?>
-    </option>
-        <?php endwhile; ?>
-    </datalist>
+        <label for="causa_id">Causa (Expediente):</label>
+        <select id="causa_id" name="causa_id" required>
+            <?php
+            $causas = $conn->query("SELECT ID, Numero_Expediente FROM Causas");
+            while ($causa = $causas->fetch_assoc()) {
+                echo "<option value='{$causa['ID']}'>Expediente: {$causa['Numero_Expediente']}</option>";
+            }
+            ?>
+        </select>
 
-    <label for="detalle">Detalle del Paso Procesal:</label>
-    <textarea id="detalle" name="detalle" required></textarea>
+        <label for="detalle">Detalle del Paso Procesal:</label>
+        <textarea id="detalle" name="detalle" required></textarea>
 
-    <label for="estado_id">Estado:</label>
-    <select id="estado_id" name="estado_id" required>
-        <?php
-        $stmt = $conn->prepare("SELECT ID, Descripcion FROM Estados");
-        $stmt->execute();
-        $result = $stmt->get_result();
-        while ($estado = $result->fetch_assoc()):
-        ?>
-            <option value="<?= htmlspecialchars($estado['ID']) ?>">
-                <?= htmlspecialchars($estado['Descripcion']) ?>
-            </option>
-        <?php endwhile; ?>
-        <option value="add">Agregar un nuevo estado</option>
-    </select>
+        <label for="estado_id">Estado:</label>
+        <select id="estado_id" name="estado_id" required>
+            <?php
+            $estados = $conn->query("SELECT ID, Descripcion FROM Estados");
+            while ($estado = $estados->fetch_assoc()) {
+                echo "<option value='{$estado['ID']}'>" . htmlspecialchars($estado['Descripcion']) . "</option>";
+            }
+            ?>
+            <option value="add">Agregar un nuevo estado</option>
+        </select>
 
-    <label for="fecha_movimiento">Fecha de Movimiento:</label>
-    <input type="date" id="fecha_movimiento" name="fecha_movimiento" required>
+        <script>
+            document.getElementById('estado_id').addEventListener('change', function() {
+                if (this.value === 'add') {
+                    window.location.href = 'estados.php?return=seguimientos.php';
+                }
+            });
+        </script>
 
-    <button type="submit" name="registrar">Registrar Paso</button>
-</form>
+        <label for="fecha_movimiento">Fecha de Movimiento:</label>
+        <input type="date" id="fecha_movimiento" name="fecha_movimiento" required>
 
+        <button type="submit" name="registrar">Registrar Paso</button>
+    </form>
 
     <hr>
 
@@ -126,20 +107,13 @@ while ($row = $result->fetch_assoc()):
     <?php
     // Procesar formulario de registro
     if (isset($_POST['registrar'])) {
-    $Numero_Expediente = $_POST['Numero_Expediente'];
-    $detalle = $conn->real_escape_string($_POST['detalle']);
-    $estado_id = $_POST['estado_id'];
-    $fecha_movimiento = $conn->real_escape_string($_POST['fecha_movimiento']);
-
-    // Verificar si el Número de Expediente es válido
-    $checkQuery = "SELECT ID FROM Causas WHERE Numero_Expediente = '$Numero_Expediente'";
-    $result = $conn->query($checkQuery);
-
-    if ($result->num_rows > 0) {
-        $causaID = $result->fetch_assoc()['ID'];
+        $causa_id = $_POST['causa_id'];
+        $detalle = $conn->real_escape_string($_POST['detalle']);
+        $estado_id = $_POST['estado_id'];
+        $fecha_movimiento = $conn->real_escape_string($_POST['fecha_movimiento']);
 
         $sql = "INSERT INTO Seguimiento (Causa_ID, Detalle, Estado_ID, Fecha_Movimiento) 
-                VALUES ('$causaID', '$detalle', '$estado_id', '$fecha_movimiento')";
+                VALUES ('$causa_id', '$detalle', '$estado_id', '$fecha_movimiento')";
 
         if ($conn->query($sql) === TRUE) {
             echo "<p>Paso procesal registrado con éxito.</p>";
@@ -154,11 +128,7 @@ while ($row = $result->fetch_assoc()):
             echo "<p>Error al registrar el paso procesal: " . $conn->error . "</p>";
             echo "<p>Consulta ejecutada: $sql</p>";
         }
-    } else {
-        echo "<p>Error: Número de expediente no válido.</p>";
     }
-}
-
     ?>
 </body>
 

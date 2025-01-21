@@ -11,6 +11,7 @@ require_once '../database/conexion.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Causas</title>
     <link rel="stylesheet" href="../css/estilos.css">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -26,15 +27,19 @@ require_once '../database/conexion.php';
 
 </head>
 <body>
-    <a href="../index.php"
-        style="display: inline-block; margin-bottom: 20px; background-color: #007BFF; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;"><i
-            class='fas fa-home'></i> Inicio</a>
-    <header>Gestión de Causas</header>
-    <script src="/Proyecto_abogados/js/funciones.js"></script>
-    <script src="/Proyecto_abogados/js/scripts.js"></script>
-    <script src="/Proyecto_abogados/js/popup.js"></script>
-    <script src="/Proyecto_abogados/js/datalist.js"></script>
-    
+    <div style="position: relative; display: inline-block; width: 100%;">
+    <!-- Botón de inicio -->
+    <a href="../index.php" 
+       style="position: absolute; top: 50%; left: 50%; transform: translate(-525%, -60%); background-color:rgb(45, 136, 45); color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+        <i class="fas fa-home"></i> Inicio
+    </a>
+
+    <!-- Título Gestión de Causas -->
+    <header style="background-color: #00796b; color: white; padding: 20px; text-align: center; font-size: 28px; font-weight: 500; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        Gestión de Causas
+    </header>
+</div>
+    <script src="/Proyecto_abogados/js/popup.js"></script> 
             
    <!-- Botón para abrir el formulario en un popup -->
     <div class="add-causa-btn" onclick="openPopup('popup1', 'overlay1')">
@@ -47,7 +52,7 @@ require_once '../database/conexion.php';
             <h2>Agregar Causa</h2>
             <button type="button" onclick="closePopup('popup1', 'overlay1')" aria-label="Cerrar">&times;</button>
         </div>
-        <div class="form-container">
+        <div class="container">
             <form action="causas.php" method="POST">
                 <label for="numero_expediente">Número de Expediente:</label>
                 <input type="text" id="numero_expediente" name="numero_expediente" required>
