@@ -46,7 +46,7 @@
           <mxGeometry y="116" width="160" height="30" as="geometry" />
         </mxCell>
         <mxCell id="7V_Yfz7llawsDNUqwENA-51" value="Peritos" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;" parent="1" vertex="1">
-          <mxGeometry x="410" y="40" width="160" height="116" as="geometry" />
+          <mxGeometry x="410" y="40" width="160" height="146" as="geometry" />
         </mxCell>
         <mxCell id="7V_Yfz7llawsDNUqwENA-52" value="ID_Perito (PK)" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="7V_Yfz7llawsDNUqwENA-51" vertex="1">
           <mxGeometry y="26" width="160" height="30" as="geometry" />
@@ -54,8 +54,11 @@
         <mxCell id="7V_Yfz7llawsDNUqwENA-53" value="Nombre" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="7V_Yfz7llawsDNUqwENA-51" vertex="1">
           <mxGeometry y="56" width="160" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="7V_Yfz7llawsDNUqwENA-54" value="Materia" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="7V_Yfz7llawsDNUqwENA-51" vertex="1">
+        <mxCell id="SNOZQMGnQesNSul9N1Nu-34" value="Materia" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="7V_Yfz7llawsDNUqwENA-51">
           <mxGeometry y="86" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="7V_Yfz7llawsDNUqwENA-54" value="domicilio_electronico" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" parent="7V_Yfz7llawsDNUqwENA-51" vertex="1">
+          <mxGeometry y="116" width="160" height="30" as="geometry" />
         </mxCell>
         <mxCell id="7V_Yfz7llawsDNUqwENA-55" value="Carpetas" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;" parent="1" vertex="1">
           <mxGeometry x="630" y="120" width="160" height="326" as="geometry" />
@@ -114,7 +117,7 @@
         <mxCell id="SNOZQMGnQesNSul9N1Nu-33" value="ID_Otro_Movimiento(FK) NUL" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="7V_Yfz7llawsDNUqwENA-59">
           <mxGeometry y="210" width="196" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="SNOZQMGnQesNSul9N1Nu-20" value="Estado" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="7V_Yfz7llawsDNUqwENA-59">
+        <mxCell id="SNOZQMGnQesNSul9N1Nu-20" value="id_estado" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="7V_Yfz7llawsDNUqwENA-59">
           <mxGeometry y="240" width="196" height="30" as="geometry" />
         </mxCell>
         <mxCell id="SNOZQMGnQesNSul9N1Nu-22" value="Descripción" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="7V_Yfz7llawsDNUqwENA-59">
